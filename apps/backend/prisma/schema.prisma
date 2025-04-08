@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Pedido {
+  id          String       @id @default(uuid())
+  dataCriacao DateTime     @default(now())
+  status      StatusPedido
+  realizadoEm DateTime?
+  itens       ItemPedido[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@map("pedidos")
+}
+
+model ItemPedido {
+  id            String   @id @default(uuid())
+  pedidoId      String
+  produtoId     String
+  quantidade    Int
+  valorUnitario Float
+  pedido        Pedido   @relation(fields: [pedidoId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("itens_pedido")
+}
+
+enum StatusPedido {
+  CRIADO
+  EM_PROCESSAMENTO
+  APROVADO
+  REJEITADO
+}
