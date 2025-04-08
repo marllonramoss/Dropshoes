@@ -19,4 +19,8 @@ export class Id {
   public equals(outro: Id): boolean {
     return this.valor === outro.valor;
   }
+
+  public toJSON(): string {
+    return this.valor;
+  }
 }

@@ -1,6 +1,5 @@
-// export * from "./casos-de-uso/CriarPedido";
-// export * from "./casos-de-uso/RealizarPedido";
-// export * from "./casos-de-uso/AdicionarItemAoPedido";
-
-import { AdicionarItemAoPedido } from "./casos-de-uso/AdicionarItemAoPedido";
-export { AdicionarItemAoPedido };
+export * from "./casos-de-uso/CriarPedido";
+export * from "./casos-de-uso/RealizarPedido";
+export * from "./casos-de-uso/AdicionarItemAoPedido";
+export * from "./casos-de-uso/BuscarPedidoPorId";
+export * from "./casos-de-uso/ListarPedidos";

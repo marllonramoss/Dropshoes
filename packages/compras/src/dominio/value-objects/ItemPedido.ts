@@ -41,4 +41,12 @@ export class ItemPedido {
   public getValorTotal(): number {
     return this.quantidade * this.valorUnitario;
   }
+
+  public toJSON() {
+    return {
+      produtoId: this.produtoId.toJSON(),
+      quantidade: this.quantidade,
+      valorUnitario: this.valorUnitario,
+    };
+  }
 }

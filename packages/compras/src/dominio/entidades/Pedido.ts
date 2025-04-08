@@ -83,6 +83,17 @@ export class Pedido {
       )
     );
   }
+
+  public toJSON() {
+    return {
+      id: this.id.toJSON(),
+      dataCriacao: this.dataCriacao,
+      status: this.status,
+      itens: this.itens.map((item) => item.toJSON()),
+      realizadoEm: this.realizadoEm,
+      eventos: this.eventos,
+    };
+  }
 }
 
 export enum StatusPedido {

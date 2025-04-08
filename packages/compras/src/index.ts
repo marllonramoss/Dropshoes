@@ -2,13 +2,12 @@
 export * from "./dominio";
 
 // Aplicação
-export * from "./aplicacao/casos-de-uso/AdicionarItemAoPedido";
-// export * from "./aplicacao/casos-de-uso/CriarPedido";
-// export * from "./aplicacao/casos-de-uso/RealizarPedido";
+export * from "./aplicacao";
 
-// Tipos
-export type { Pedido } from "./dominio/entidades/Pedido";
-export type { ItemPedido } from "./dominio/value-objects/ItemPedido";
-export type { PedidoRepository } from "./dominio/repositories/PedidoRepository";
-export type { Evento } from "./dominio/events/Evento";
-export type { PedidoRealizado } from "./dominio/events/PedidoRealizado";
+// Tipos e Interfaces
+
+// Interfaces (exportadas como valor para DI)
+export { PedidoRepository } from "./dominio/repositories/PedidoRepository";
+
+// Constantes
+export const x = 10;
