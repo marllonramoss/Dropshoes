@@ -1,0 +1,29 @@
+### Variáveis
+@host = http://localhost:3000
+# Use um ID de pedido real
+@pedidoId = 89935c5a-1f10-4656-b75a-fc82298749a7
+# Use um ID que não existe
+@idInexistente = 00000000-0000-0000-0000-000000000000
+
+### 1. Tentar buscar pedido inexistente
+GET {{host}}/compras/{{idInexistente}}
+
+### 2. Tentar aprovar pedido inexistente
+PUT {{host}}/compras/{{idInexistente}}/aprovar
+
+### 3. Tentar rejeitar pedido inexistente
+PUT {{host}}/compras/{{idInexistente}}/rejeitar
+
+### 4. Tentar aprovar pedido que não está em processamento
+# Primeiro, verifique se o pedido NÃO está em processamento
+GET {{host}}/compras/{{pedidoId}}/status
+
+# Depois tente aprovar (deve falhar se não estiver em processamento)
+PUT {{host}}/compras/{{pedidoId}}/aprovar
+
+### 5. Tentar rejeitar pedido que não está em processamento
+# Primeiro, verifique se o pedido NÃO está em processamento
+GET {{host}}/compras/{{pedidoId}}/status
+
+# Depois tente rejeitar (deve falhar se não estiver em processamento)
+PUT {{host}}/compras/{{pedidoId}}/rejeitar 

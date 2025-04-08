@@ -1,0 +1,51 @@
+### Variáveis
+@host = http://localhost:3000
+@pedidoId = 89935c5a-1f10-4656-b75a-fc82298749a7
+
+### Listar todos os pedidos
+GET {{host}}/compras
+
+### Buscar pedido por ID
+GET {{host}}/compras/{{pedidoId}}
+
+### Verificar status do pedido
+GET {{host}}/compras/{{pedidoId}}/status
+
+### Criar novo pedido
+POST {{host}}/compras
+Content-Type: application/json
+
+{
+  "clienteId": "asd",
+  "itens": [
+    {
+      "produtoId": "123e4567-e89b-12d3-a456-426614174000",
+      "quantidade": 2,
+      "precoUnitario": 100
+    },
+    {
+      "produtoId": "223e4567-e89b-12d3-a456-426614174001",
+      "quantidade": 1,
+      "precoUnitario": 50
+    }
+  ]
+}
+
+### Adicionar item ao pedido
+POST {{host}}/compras/ee22791e-3a54-4606-81d8-fe62bf432a9c/itens
+Content-Type: application/json
+
+{
+  "produtoId": "323e4567-e89b-12d3-a456-426614174002",
+  "quantidade": 3,
+  "valorUnitario": 75
+}
+
+### Realizar pedido (muda para EM_PROCESSAMENTO)
+PUT {{host}}/compras/{{pedidoId}}/realizar
+
+### Aprovar pedido
+PUT {{host}}/compras/{{pedidoId}}/aprovar
+
+### Rejeitar pedido
+PUT {{host}}/compras/{{pedidoId}}/rejeitar 

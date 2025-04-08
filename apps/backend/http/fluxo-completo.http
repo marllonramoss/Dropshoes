@@ -1,0 +1,55 @@
+### Variáveis
+@host = http://localhost:3000
+# ID temporário - será atualizado após criar o pedido
+@pedidoId = temp-id
+
+### 1. Criar novo pedido
+# Execute esta requisição primeiro e atualize @pedidoId com o ID retornado
+POST {{host}}/compras
+Content-Type: application/json
+
+{
+  "clienteId": "cliente-123",
+  "itens": [
+    {
+      "produtoId": "123e4567-e89b-12d3-a456-426614174000",
+      "quantidade": 2,
+      "precoUnitario": 100
+    }
+  ]
+}
+
+### 2. Verificar status inicial (deve ser CRIADO)
+# Atualize @pedidoId antes de executar
+GET {{host}}/compras/{{pedidoId}}/status
+
+### 3. Adicionar mais um item (opcional)
+# Atualize @pedidoId antes de executar
+POST {{host}}/compras/{{pedidoId}}/itens
+Content-Type: application/json
+
+{
+  "produtoId": "223e4567-e89b-12d3-a456-426614174001",
+  "quantidade": 1,
+  "valorUnitario": 150
+}
+
+### 4. Realizar pedido (muda para EM_PROCESSAMENTO)
+# Atualize @pedidoId antes de executar
+PUT {{host}}/compras/{{pedidoId}}/realizar
+
+### 5. Verificar status após realizar (deve ser EM_PROCESSAMENTO)
+# Atualize @pedidoId antes de executar
+GET {{host}}/compras/{{pedidoId}}/status
+
+### 6A. Aprovar pedido
+# Atualize @pedidoId antes de executar
+PUT {{host}}/compras/{{pedidoId}}/aprovar
+
+### 6B. Rejeitar pedido (alternativa à aprovação)
+# Atualize @pedidoId antes de executar
+# PUT {{host}}/compras/{{pedidoId}}/rejeitar
+
+### 7. Verificar status final (deve ser APROVADO ou REJEITADO)
+# Atualize @pedidoId antes de executar
+GET {{host}}/compras/{{pedidoId}}/status 

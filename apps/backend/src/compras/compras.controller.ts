@@ -20,6 +20,7 @@ import {
   Id,
 } from '@dropshoes/compras';
 import { CriarCompraDto } from './dto/criar-compra.dto';
+import { AdicionarItemDto } from './dto/adicionar-item.dto';
 
 @Controller('compras')
 export class ComprasController {
@@ -55,6 +56,16 @@ export class ComprasController {
     }
 
     return pedido;
+  }
+
+  @Post(':id/itens')
+  async adicionarItem(@Param('id') id: string, @Body() dto: AdicionarItemDto) {
+    return await this.adicionarItemAoPedido.executar({
+      pedidoId: id,
+      produtoId: dto.produtoId,
+      quantidade: dto.quantidade,
+      valorUnitario: dto.valorUnitario,
+    });
   }
 
   @Put(':id/realizar')
