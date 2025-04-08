@@ -5,6 +5,8 @@ import { ListarPedidos } from '@dropshoes/compras';
 import { BuscarPedidoPorId } from '@dropshoes/compras';
 import { AdicionarItemAoPedido } from '@dropshoes/compras';
 import { RealizarPedido } from '@dropshoes/compras';
+import { AprovarPedido } from '@dropshoes/compras';
+import { RejeitarPedido } from '@dropshoes/compras';
 import { PrismaComprasRepository } from './infra/prisma-compras.repository';
 import { EventDispatcher } from './infra/event-dispatcher';
 
@@ -48,6 +50,16 @@ export const EVENT_DISPATCHER = 'EVENT_DISPATCHER';
       useFactory: (pedidoRepository, eventDispatcher) =>
         new RealizarPedido(pedidoRepository, eventDispatcher),
       inject: [PEDIDO_REPOSITORY, EVENT_DISPATCHER],
+    },
+    {
+      provide: AprovarPedido,
+      useFactory: (pedidoRepository) => new AprovarPedido(pedidoRepository),
+      inject: [PEDIDO_REPOSITORY],
+    },
+    {
+      provide: RejeitarPedido,
+      useFactory: (pedidoRepository) => new RejeitarPedido(pedidoRepository),
+      inject: [PEDIDO_REPOSITORY],
     },
   ],
 })

@@ -20,6 +20,10 @@ export class Id {
     return this.valor === outro.valor;
   }
 
+  public toString(): string {
+    return this.valor;
+  }
+
   public toJSON(): string {
     return this.valor;
   }

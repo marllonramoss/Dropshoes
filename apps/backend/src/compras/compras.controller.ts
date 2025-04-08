@@ -1,10 +1,23 @@
-import { Controller, Get, Post, Body, Param, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  HttpCode,
+  HttpStatus,
+  Put,
+  NotFoundException,
+} from '@nestjs/common';
 import {
   CriarPedido,
   ListarPedidos,
   BuscarPedidoPorId,
   AdicionarItemAoPedido,
   RealizarPedido,
+  AprovarPedido,
+  RejeitarPedido,
+  Id,
 } from '@dropshoes/compras';
 import { CriarCompraDto } from './dto/criar-compra.dto';
 
@@ -16,6 +29,8 @@ export class ComprasController {
     private readonly buscarPedidoPorId: BuscarPedidoPorId,
     private readonly adicionarItemAoPedido: AdicionarItemAoPedido,
     private readonly realizarPedido: RealizarPedido,
+    private readonly aprovarPedido: AprovarPedido,
+    private readonly rejeitarPedido: RejeitarPedido,
   ) {}
 
   @Post()
@@ -55,5 +70,34 @@ export class ComprasController {
   @Get(':id')
   async buscar(@Param('id') id: string) {
     return await this.buscarPedidoPorId.executar(id);
+  }
+
+  @Get(':id/status')
+  async verificarStatus(@Param('id') id: string) {
+    const pedido = await this.buscarPedidoPorId.executar(id);
+
+    if (!pedido) {
+      throw new NotFoundException(`Pedido com ID ${id} não encontrado`);
+    }
+
+    return {
+      id: pedido.getId().getValor(),
+      status: pedido.getStatus(),
+      mensagem: `O pedido está com o status: ${pedido.getStatus()}`,
+    };
+  }
+
+  @Put(':id/aprovar')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async aprovar(@Param('id') id: string): Promise<void> {
+    const pedidoId = new Id(id);
+    await this.aprovarPedido.executar(pedidoId);
+  }
+
+  @Put(':id/rejeitar')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async rejeitar(@Param('id') id: string): Promise<void> {
+    const pedidoId = new Id(id);
+    await this.rejeitarPedido.executar(pedidoId);
   }
 }

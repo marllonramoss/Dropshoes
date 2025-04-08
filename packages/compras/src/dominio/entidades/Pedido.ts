@@ -2,6 +2,8 @@ import { Id } from "../value-objects/Id";
 import { ItemPedido } from "../value-objects/ItemPedido";
 import { Evento } from "../events/Evento";
 import { PedidoRealizado } from "../events/PedidoRealizado";
+import { PedidoAprovado } from "../events/PedidoAprovado";
+import { PedidoRejeitado } from "../events/PedidoRejeitado";
 
 export class Pedido {
   private readonly id: Id;
@@ -77,6 +79,46 @@ export class Pedido {
         this.getValorTotal(),
         this.itens.map((item) => ({
           produtoId: item.getProdutoId(),
+          quantidade: item.getQuantidade(),
+          valorUnitario: item.getValorUnitario(),
+        }))
+      )
+    );
+  }
+
+  public aprovar(): void {
+    if (this.status !== StatusPedido.EM_PROCESSAMENTO) {
+      throw new Error("Só é possível aprovar um pedido em processamento");
+    }
+    this.status = StatusPedido.APROVADO;
+
+    // Disparar o evento de domínio
+    this.eventos.push(
+      new PedidoAprovado(
+        this.id,
+        this.getValorTotal(),
+        this.itens.map((item) => ({
+          produtoId: item.getProdutoId().toString(),
+          quantidade: item.getQuantidade(),
+          valorUnitario: item.getValorUnitario(),
+        }))
+      )
+    );
+  }
+
+  public rejeitar(): void {
+    if (this.status !== StatusPedido.EM_PROCESSAMENTO) {
+      throw new Error("Só é possível rejeitar um pedido em processamento");
+    }
+    this.status = StatusPedido.REJEITADO;
+
+    // Disparar o evento de domínio
+    this.eventos.push(
+      new PedidoRejeitado(
+        this.id,
+        this.getValorTotal(),
+        this.itens.map((item) => ({
+          produtoId: item.getProdutoId().toString(),
           quantidade: item.getQuantidade(),
           valorUnitario: item.getValorUnitario(),
         }))

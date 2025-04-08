@@ -4,6 +4,14 @@ import { PedidoRepository } from '@dropshoes/compras';
 import { Pedido } from '@dropshoes/compras';
 import { Id } from '@dropshoes/compras';
 import { ItemPedido } from '@dropshoes/compras';
+import {
+  Pedido as PrismaPedido,
+  ItemPedido as PrismaItemPedido,
+} from '@prisma/client';
+
+type PedidoComItens = PrismaPedido & {
+  itens: PrismaItemPedido[];
+};
 
 @Injectable()
 export class PrismaComprasRepository implements PedidoRepository {
@@ -48,16 +56,7 @@ export class PrismaComprasRepository implements PedidoRepository {
 
     if (!pedidoData) return null;
 
-    const pedido = new Pedido(new Id(pedidoData.id));
-    pedidoData.itens.forEach((item) => {
-      pedido.adicionarItem(
-        new ItemPedido(
-          new Id(item.produtoId),
-          item.quantidade,
-          item.valorUnitario,
-        ),
-      );
-    });
+    const pedido = this.mapearPedidoDoDb(pedidoData as PedidoComItens);
 
     return pedido;
   }
@@ -67,9 +66,16 @@ export class PrismaComprasRepository implements PedidoRepository {
       include: { itens: true },
     });
 
-    return pedidosData.map((pedidoData) => {
-      const pedido = new Pedido(new Id(pedidoData.id));
-      pedidoData.itens.forEach((item) => {
+    return pedidosData.map((pedidoData) =>
+      this.mapearPedidoDoDb(pedidoData as PedidoComItens),
+    );
+  }
+
+  private mapearPedidoDoDb(pedidoData: PedidoComItens): Pedido {
+    const pedido = new Pedido(new Id(pedidoData.id));
+
+    for (const item of pedidoData.itens) {
+      try {
         pedido.adicionarItem(
           new ItemPedido(
             new Id(item.produtoId),
@@ -77,8 +83,37 @@ export class PrismaComprasRepository implements PedidoRepository {
             item.valorUnitario,
           ),
         );
-      });
-      return pedido;
-    });
+      } catch (error) {
+        console.error('Erro ao adicionar item:', error);
+      }
+    }
+
+    try {
+      if (pedidoData.status === 'EM_PROCESSAMENTO') {
+        try {
+          pedido.realizar();
+        } catch (e) {
+          console.error('Erro ao realizar pedido:', e);
+        }
+      } else if (pedidoData.status === 'APROVADO') {
+        try {
+          pedido.realizar();
+          pedido.aprovar();
+        } catch (e) {
+          console.error('Erro ao aprovar pedido:', e);
+        }
+      } else if (pedidoData.status === 'REJEITADO') {
+        try {
+          pedido.realizar();
+          pedido.rejeitar();
+        } catch (e) {
+          console.error('Erro ao rejeitar pedido:', e);
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao restaurar estado do pedido:', error);
+    }
+
+    return pedido;
   }
 }

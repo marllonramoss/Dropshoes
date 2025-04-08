@@ -5,3 +5,5 @@ export * from "./repositories/PedidoRepository";
 export * from "./events/Evento";
 export * from "./events/PedidoRealizado";
 export * from "./events/EventDispatcher";
+export * from "./events/PedidoAprovado";
+export * from "./events/PedidoRejeitado";
