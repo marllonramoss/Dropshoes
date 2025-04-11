@@ -132,29 +132,64 @@ export const produtoService = {
     produto: NovoProdutoDTO
   ): Promise<Produto> {
     try {
+      // Garantir o formato correto dos dados
+      const payload = {
+        nome: produto.nome,
+        marca: produto.marca,
+        tamanhos: produto.tamanhos,
+        preco: Number(produto.preco),
+        imagens: produto.imagens.map((img) => ({
+          url: img.url,
+          descricao: img.descricao,
+          principal: Boolean(img.principal),
+        })),
+      };
+
+      console.log("Enviando para API:", JSON.stringify(payload, null, 2));
+
       const response = await fetch(`${API_URL}/produtos/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
-        body: JSON.stringify(produto),
+        body: JSON.stringify(payload),
       });
 
-      const data = await response.json();
+      // Log da resposta bruta para debug
+      console.log("Status:", response.status);
+      console.log("Status Text:", response.statusText);
 
       if (!response.ok) {
-        if (data && data.message) {
-          if (typeof data.message === "string") {
-            throw new Error(data.message);
-          } else if (Array.isArray(data.message)) {
-            throw new Error(data.message.join(", "));
+        const responseText = await response.text();
+        try {
+          const errorData = JSON.parse(responseText);
+          if (errorData.message) {
+            if (typeof errorData.message === "string") {
+              throw new Error(errorData.message);
+            } else if (Array.isArray(errorData.message)) {
+              throw new Error(errorData.message.join(", "));
+            }
           }
+        } catch (parseError) {
+          throw new Error(`Erro ${response.status}: ${responseText}`);
         }
         throw new Error(`Erro ${response.status}: ${response.statusText}`);
       }
 
-      return data;
+      // Tenta fazer o parse do JSON apenas se houver conteúdo
+      const responseText = await response.text();
+      if (!responseText) {
+        // Se não houver conteúdo, busca o produto atualizado
+        return await this.buscarProdutoPorId(id);
+      }
+
+      try {
+        return JSON.parse(responseText);
+      } catch (parseError) {
+        // Se não conseguir fazer o parse, busca o produto atualizado
+        return await this.buscarProdutoPorId(id);
+      }
     } catch (error) {
       if (error instanceof Error) {
         throw error;

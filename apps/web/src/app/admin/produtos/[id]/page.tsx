@@ -1,17 +1,19 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { produtoService, NovoProdutoDTO } from "@/services/produtoService";
 import Link from "next/link";
+import { toast, Toaster } from "react-hot-toast";
 
 interface EditarProdutoProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default function EditarProduto({ params }: EditarProdutoProps) {
+  const { id } = use(params);
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -36,17 +38,18 @@ export default function EditarProduto({ params }: EditarProdutoProps) {
     const carregarProduto = async () => {
       try {
         setLoading(true);
-        const produto = await produtoService.buscarProdutoPorId(params.id);
+        const produto = await produtoService.buscarProdutoPorId(id);
         setFormData({
-          nome: produto.nome,
-          marca: produto.marca,
-          tamanhos: produto.tamanhos,
-          preco: produto.preco,
-          imagens: produto.imagens,
+          nome: produto._nome,
+          marca: produto._marca,
+          tamanhos: produto._tamanhos.map((t) => t._valor),
+          preco: produto._preco._valor,
+          imagens: produto._imagens,
         });
         setError(null);
       } catch (err) {
         console.error("Erro ao carregar produto:", err);
+        toast.error("Não foi possível carregar os dados do produto.");
         setError("Não foi possível carregar os dados do produto.");
       } finally {
         setLoading(false);
@@ -54,7 +57,7 @@ export default function EditarProduto({ params }: EditarProdutoProps) {
     };
 
     carregarProduto();
-  }, [params.id]);
+  }, [id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,13 +75,17 @@ export default function EditarProduto({ params }: EditarProdutoProps) {
     try {
       setSaving(true);
       setError(null);
-      await produtoService.atualizarProduto(params.id, formData);
+      await produtoService.atualizarProduto(id, formData);
+      toast.success("Produto atualizado com sucesso!");
       router.push("/admin/produtos");
     } catch (err) {
       console.error("Erro ao atualizar produto:", err);
-      setError(
-        "Não foi possível atualizar o produto. Tente novamente mais tarde."
-      );
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Não foi possível atualizar o produto. Tente novamente mais tarde.";
+      toast.error(message);
+      setError(message);
     } finally {
       setSaving(false);
     }
@@ -127,6 +134,7 @@ export default function EditarProduto({ params }: EditarProdutoProps) {
 
   return (
     <div>
+      <Toaster position="top-right" />
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Editar Produto</h1>
         <Link
