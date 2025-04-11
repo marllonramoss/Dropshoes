@@ -33,10 +33,51 @@ model ItemPedido {
   quantidade    Int
   valorUnitario Float
   pedido        Pedido   @relation(fields: [pedidoId], references: [id])
+  produto       Produto  @relation(fields: [produtoId], references: [id], onDelete: Cascade)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
   @@map("itens_pedido")
+}
+
+model Produto {
+  id        String           @id @default(uuid())
+  nome      String
+  marca     String
+  preco     Float
+  slug      String           @unique
+  tamanhos  TamanhoProduto[]
+  imagens   ImagemProduto[]
+  itens     ItemPedido[]
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@map("produtos")
+}
+
+model TamanhoProduto {
+  id        String   @id @default(uuid())
+  produtoId String
+  tamanho   Int
+  produto   Produto  @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([produtoId, tamanho])
+  @@map("tamanhos_produto")
+}
+
+model ImagemProduto {
+  id        String   @id @default(uuid())
+  produtoId String
+  url       String
+  descricao String
+  principal Boolean  @default(false)
+  produto   Produto  @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("imagens_produto")
 }
 
 enum StatusPedido {

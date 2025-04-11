@@ -3,12 +3,10 @@ GET http://localhost:3000/produtos
 Accept: application/json
 
 ### Buscar produto por ID
-GET http://localhost:3000/produtos/123
+GET http://localhost:3000/produtos/cc29b6e8-1dd7-4553-b93e-8bab6119d678
 Accept: application/json
 
-### Buscar produto por slug
-GET http://localhost:3000/produtos/slug/nike-air-force-1
-Accept: application/json
+
 
 ### Criar novo produto
 POST http://localhost:3000/produtos
@@ -16,7 +14,7 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "nome": "Adidas v3",
+  "nome": "Adidas v7",
   "marca": "Adidas",
   "tamanhos": [40],
   "preco": 799.90,
@@ -29,33 +27,29 @@ Accept: application/json
   ]
 }
 
-### Atualizar produto
-PUT http://localhost:3000/produtos/0c78905d-5c6e-48a6-8af2-2cb21a3c6121
+### Editar um produto
+PUT http://localhost:3000/produtos/cc29b6e8-1dd7-4553-b93e-8bab6119d678
 Content-Type: application/json
-Accept: application/json
 
 {
-  "nome": "Nike Air Force 1 Premium",
+  "nome": "Nike Air Max Atualizado",
   "marca": "Nike",
-  "tamanhos": [40],
-  "preco": 899.90,
+  "preco": 59.90,
+  "tamanhos": [38, 39, 40, 41, 42],
   "imagens": [
     {
-      "url": "https://example.com/air-force-1-premium.jpg",
-      "descricao": "Nike Air Force 1 Premium - Vista frontal",
+      "url": "https://example.com/nike-air-max-1.jpg",
+      "descricao": "Vista frontal",
       "principal": true
+    },
+    {
+      "url": "https://example.com/nike-air-max-2.jpg",
+      "descricao": "Vista lateral",
+      "principal": false
     }
   ]
 }
 
 ### Remover produto
-DELETE http://localhost:3000/produtos/123
-Accept: application/json
+DELETE http://localhost:3000/produtos/7ed8d307-8628-49fa-8d7e-9b33385edbaa
 
-### Listar produtos por marca
-GET http://localhost:3000/produtos/marca/Nike
-Accept: application/json
-
-### Listar produtos com tamanho específico
-GET http://localhost:3000/produtos/tamanho/40
-Accept: application/json 
