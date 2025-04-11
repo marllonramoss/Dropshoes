@@ -75,6 +75,10 @@ export class PrismaComprasRepository implements PedidoRepository {
     const pedido = new Pedido(new Id(pedidoData.id));
 
     for (const item of pedidoData.itens) {
+      if (item.produtoId === null) {
+        throw new Error('Item de pedido sem produtoId');
+      }
+
       try {
         pedido.adicionarItem(
           new ItemPedido(

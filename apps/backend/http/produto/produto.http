@@ -1,0 +1,61 @@
+### Listar todos os produtos
+GET http://localhost:3000/produtos
+Accept: application/json
+
+### Buscar produto por ID
+GET http://localhost:3000/produtos/123
+Accept: application/json
+
+### Buscar produto por slug
+GET http://localhost:3000/produtos/slug/nike-air-force-1
+Accept: application/json
+
+### Criar novo produto
+POST http://localhost:3000/produtos
+Content-Type: application/json
+Accept: application/json
+
+{
+  "nome": "Adidas v3",
+  "marca": "Adidas",
+  "tamanhos": [40],
+  "preco": 799.90,
+  "imagens": [
+    {
+      "url": "https://example.com/air-force-1.jpg",
+      "descricao": "Nike Air Force 1 - Vista frontal",
+      "principal": true
+    }
+  ]
+}
+
+### Atualizar produto
+PUT http://localhost:3000/produtos/0c78905d-5c6e-48a6-8af2-2cb21a3c6121
+Content-Type: application/json
+Accept: application/json
+
+{
+  "nome": "Nike Air Force 1 Premium",
+  "marca": "Nike",
+  "tamanhos": [40],
+  "preco": 899.90,
+  "imagens": [
+    {
+      "url": "https://example.com/air-force-1-premium.jpg",
+      "descricao": "Nike Air Force 1 Premium - Vista frontal",
+      "principal": true
+    }
+  ]
+}
+
+### Remover produto
+DELETE http://localhost:3000/produtos/123
+Accept: application/json
+
+### Listar produtos por marca
+GET http://localhost:3000/produtos/marca/Nike
+Accept: application/json
+
+### Listar produtos com tamanho específico
+GET http://localhost:3000/produtos/tamanho/40
+Accept: application/json 

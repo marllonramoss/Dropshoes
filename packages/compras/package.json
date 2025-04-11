@@ -1,6 +1,7 @@
 {
   "name": "@dropshoes/compras",
   "version": "0.0.1",
+  "description": "Módulo de compras produto para a loja DropShoes",
   "private": true,
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
