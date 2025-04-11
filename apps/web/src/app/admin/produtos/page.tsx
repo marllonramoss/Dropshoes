@@ -3,51 +3,62 @@
 import { useState, useEffect } from "react";
 import { produtoService, Produto } from "@/services/produtoService";
 import Link from "next/link";
+import { toast, Toaster } from "react-hot-toast";
 
 export default function ProdutosAdmin() {
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [excluindo, setExcluindo] = useState<string | null>(null);
 
-  // Carregar produtos ao montar o componente
+  const carregarProdutos = async () => {
+    try {
+      setLoading(true);
+      const data = await produtoService.listarProdutos();
+      setProdutos(data);
+    } catch (err) {
+      console.error("Erro ao carregar produtos:", err);
+      toast.error("Erro ao carregar produtos");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const carregarProdutos = async () => {
-      try {
-        setLoading(true);
-        const data = await produtoService.listarProdutos();
-        setProdutos(data);
-        setError(null);
-      } catch (err) {
-        console.error("Erro ao carregar produtos:", err);
-        setError(
-          "Não foi possível carregar os produtos. Tente novamente mais tarde."
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
     carregarProdutos();
   }, []);
 
-  // Função para excluir um produto
   const handleExcluir = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir este produto?")) {
       try {
+        setExcluindo(id);
         await produtoService.excluirProduto(id);
-        // Atualizar a lista de produtos após a exclusão
-        setProdutos(produtos.filter((produto) => produto.id !== id));
+
+        // Atualiza o estado local removendo o produto excluído
+        setProdutos((prevProdutos) =>
+          prevProdutos.filter((produto) => produto._id !== id)
+        );
+
+        toast.success("Produto excluído com sucesso!");
       } catch (err) {
         console.error("Erro ao excluir produto:", err);
-        alert(
-          "Não foi possível excluir o produto. Tente novamente mais tarde."
+        toast.error(
+          err instanceof Error
+            ? err.message
+            : "Não foi possível excluir o produto"
         );
+      } finally {
+        setExcluindo(null);
       }
     }
   };
 
+  if (loading) {
+    return <div className="text-center py-10">Carregando produtos...</div>;
+  }
+
   return (
-    <div>
+    <div className="p-6">
+      <Toaster position="top-right" />
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Gerenciamento de Produtos</h1>
         <Link
@@ -58,80 +69,94 @@ export default function ProdutosAdmin() {
         </Link>
       </div>
 
-      {loading ? (
-        <div className="text-center py-10">
-          <p>Carregando produtos...</p>
-        </div>
-      ) : error ? (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
-          <p>{error}</p>
-        </div>
-      ) : produtos.length === 0 ? (
+      {produtos.length === 0 ? (
         <div className="text-center py-10">
           <p className="text-gray-600">Nenhum produto cadastrado.</p>
         </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white">
-            <thead className="bg-gray-100">
+        <div className="overflow-x-auto bg-white rounded-lg shadow">
+          <table className="min-w-full">
+            <thead className="bg-gray-50">
               <tr>
-                <th className="py-3 px-4 text-left">Imagem</th>
-                <th className="py-3 px-4 text-left">Nome</th>
-                <th className="py-3 px-4 text-left">Marca</th>
-                <th className="py-3 px-4 text-left">Preço</th>
-                <th className="py-3 px-4 text-left">Tamanhos</th>
-                <th className="py-3 px-4 text-left">Ações</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Produto
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Marca
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Preço
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Tamanhos
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Ações
+                </th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="bg-white divide-y divide-gray-200">
               {produtos.map((produto) => (
-                <tr key={produto.id} className="border-b hover:bg-gray-50">
-                  <td className="py-3 px-4">
-                    {produto.imagens && produto.imagens.length > 0 ? (
-                      <img
-                        src={
-                          produto.imagens.find((img) => img.principal)?.url ||
-                          produto.imagens[0].url
-                        }
-                        alt={produto.nome}
-                        className="w-16 h-16 object-cover"
-                      />
-                    ) : (
-                      <div className="w-16 h-16 bg-gray-200 flex items-center justify-center">
-                        <span className="text-xs text-gray-500">
-                          Sem imagem
-                        </span>
+                <tr
+                  key={produto._id}
+                  className={`hover:bg-gray-50 ${excluindo === produto._id ? "opacity-50" : ""}`}
+                >
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className="h-10 w-10 flex-shrink-0">
+                        {produto._imagens && produto._imagens[0] ? (
+                          <img
+                            className="h-10 w-10 rounded-full object-cover"
+                            src={produto._imagens[0].url}
+                            alt={produto._nome}
+                          />
+                        ) : (
+                          <div className="h-10 w-10 rounded-full bg-gray-200" />
+                        )}
                       </div>
-                    )}
+                      <div className="ml-4">
+                        <div className="text-sm font-medium text-gray-900">
+                          {produto._nome}
+                        </div>
+                      </div>
+                    </div>
                   </td>
-                  <td className="py-3 px-4">{produto.nome}</td>
-                  <td className="py-3 px-4">{produto.marca}</td>
-                  <td className="py-3 px-4">R$ {produto.preco.toFixed(2)}</td>
-                  <td className="py-3 px-4">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {produto._marca}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    R$ {(produto._preco._valor || 0).toFixed(2)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex flex-wrap gap-1">
-                      {produto.tamanhos.map((tamanho) => (
+                      {(produto._tamanhos || []).map((tamanho) => (
                         <span
-                          key={tamanho}
-                          className="inline-block bg-gray-200 rounded px-2 py-1 text-xs"
+                          key={tamanho._valor}
+                          className="inline-block bg-gray-100 rounded px-2 py-1 text-xs text-gray-600"
                         >
-                          {tamanho}
+                          {tamanho._valor}
                         </span>
                       ))}
                     </div>
                   </td>
-                  <td className="py-3 px-4">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2">
                       <Link
-                        href={`/admin/produtos/${produto.id}`}
-                        className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+                        href={`/admin/produtos/${produto._id}`}
+                        className="text-blue-600 hover:text-blue-900"
                       >
                         Editar
                       </Link>
                       <button
-                        onClick={() => handleExcluir(produto.id)}
-                        className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700"
+                        onClick={() => handleExcluir(produto._id)}
+                        disabled={excluindo === produto._id}
+                        className={`text-red-600 hover:text-red-900 ${
+                          excluindo === produto._id
+                            ? "opacity-50 cursor-not-allowed"
+                            : ""
+                        }`}
                       >
-                        Excluir
+                        {excluindo === produto._id ? "Excluindo..." : "Excluir"}
                       </button>
                     </div>
                   </td>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { produtoService, NovoProdutoDTO } from "@/services/produtoService";
 import Link from "next/link";
+import { toast, Toaster } from "react-hot-toast";
 
 export default function NovoProduto() {
   const router = useRouter();
@@ -24,27 +25,79 @@ export default function NovoProduto() {
     principal: false,
   });
 
+  const validarUrl = (url: string): boolean => {
+    try {
+      new URL(url);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Validações básicas
     if (
       !formData.nome ||
       !formData.marca ||
       formData.tamanhos.length === 0 ||
-      formData.preco <= 0
+      formData.preco <= 0 ||
+      formData.imagens.length === 0
     ) {
-      setError("Por favor, preencha todos os campos obrigatórios.");
+      const errorMessage = !formData.imagens.length
+        ? "É necessário adicionar pelo menos uma imagem para o produto."
+        : "Por favor, preencha todos os campos obrigatórios.";
+      toast.error(errorMessage);
+      setError(errorMessage);
+      return;
+    }
+
+    // Validar se há pelo menos uma imagem principal
+    const temImagemPrincipal = formData.imagens.some((img) => img.principal);
+    if (!temImagemPrincipal) {
+      const errorMessage =
+        "É necessário definir uma imagem principal para o produto.";
+      toast.error(errorMessage);
+      setError(errorMessage);
       return;
     }
 
     try {
       setLoading(true);
       setError(null);
-      await produtoService.criarProduto(formData);
+
+      // Log detalhado do payload
+      const payload = {
+        nome: formData.nome,
+        marca: formData.marca,
+        tamanhos: formData.tamanhos,
+        preco: Number(formData.preco),
+        imagens: formData.imagens.map((img) => ({
+          url: img.url,
+          descricao: img.descricao,
+          principal: Boolean(img.principal),
+        })),
+      };
+
+      console.log("Payload da requisição:", JSON.stringify(payload, null, 2));
+      await produtoService.criarProduto(payload);
+      toast.success("Produto criado com sucesso!");
       router.push("/admin/produtos");
-    } catch (err) {
-      console.error("Erro ao criar produto:", err);
-      setError("Não foi possível criar o produto. Tente novamente mais tarde.");
+    } catch (error) {
+      console.error("Erro ao criar produto:", error);
+
+      // Tratamento específico para erros conhecidos
+      if (error instanceof Error) {
+        const errorMessage = error.message;
+        toast.error(errorMessage);
+        setError(errorMessage);
+      } else {
+        const errorMessage =
+          "Ocorreu um erro inesperado. Por favor, tente novamente mais tarde.";
+        toast.error(errorMessage);
+        setError(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
@@ -67,13 +120,37 @@ export default function NovoProduto() {
   };
 
   const handleAddImagem = () => {
-    if (novaImagem.url && novaImagem.descricao) {
-      setFormData({
-        ...formData,
-        imagens: [...formData.imagens, novaImagem],
-      });
-      setNovaImagem({ url: "", descricao: "", principal: false });
+    // Validar URL
+    if (!novaImagem.url || !validarUrl(novaImagem.url)) {
+      setError("Por favor, insira uma URL válida para a imagem");
+      return;
     }
+
+    // Validar descrição
+    if (!novaImagem.descricao || novaImagem.descricao.length < 3) {
+      setError("A descrição da imagem deve ter pelo menos 3 caracteres");
+      return;
+    }
+
+    // Se não houver imagens ainda, definir esta como principal
+    const isFirstImage = formData.imagens.length === 0;
+    const newImage = {
+      ...novaImagem,
+      principal: isFirstImage ? true : novaImagem.principal,
+    };
+
+    // Se esta imagem for marcada como principal, remover principal das outras
+    const updatedImages = formData.imagens.map((img) => ({
+      ...img,
+      principal: newImage.principal ? false : img.principal,
+    }));
+
+    setFormData({
+      ...formData,
+      imagens: [...updatedImages, newImage],
+    });
+    setNovaImagem({ url: "", descricao: "", principal: false });
+    setError(null);
   };
 
   const handleRemoveImagem = (url: string) => {
@@ -85,6 +162,7 @@ export default function NovoProduto() {
 
   return (
     <div>
+      <Toaster position="top-right" />
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Novo Produto</h1>
         <Link
@@ -146,9 +224,12 @@ export default function NovoProduto() {
             type="number"
             step="0.01"
             min="0"
-            value={formData.preco}
+            value={formData.preco || ""}
             onChange={(e) =>
-              setFormData({ ...formData, preco: parseFloat(e.target.value) })
+              setFormData({
+                ...formData,
+                preco: e.target.value ? parseFloat(e.target.value) : 0,
+              })
             }
             className="w-full px-3 py-2 border rounded-md"
             required
@@ -196,7 +277,7 @@ export default function NovoProduto() {
         {/* Imagens */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Imagens
+            Imagens *
           </label>
           <div className="space-y-4">
             {formData.imagens.map((imagem, index) => (

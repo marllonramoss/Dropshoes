@@ -188,9 +188,12 @@ export default function EditarProduto({ params }: EditarProdutoProps) {
             type="number"
             step="0.01"
             min="0"
-            value={formData.preco}
+            value={formData.preco || ""}
             onChange={(e) =>
-              setFormData({ ...formData, preco: parseFloat(e.target.value) })
+              setFormData({
+                ...formData,
+                preco: e.target.value ? parseFloat(e.target.value) : 0,
+              })
             }
             className="w-full px-3 py-2 border rounded-md"
             required

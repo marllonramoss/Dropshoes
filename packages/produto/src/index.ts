@@ -6,11 +6,7 @@ export { TamanhoSapato } from "./dominio/objetos-valor/TamanhoSapato";
 export { Preco } from "./dominio/objetos-valor/Preco";
 
 // Tipos e validadores
-export {
-  ImagemProduto,
-  validadorImagem,
-  TIPOS_IMAGEM_VALIDOS,
-} from "./dominio/tipos/ImagemProduto";
+export { ImagemProduto, validadorImagem } from "./dominio/tipos/ImagemProduto";
 
 // Eventos
 export { ProdutoCriado } from "./dominio/eventos/ProdutoCriado";

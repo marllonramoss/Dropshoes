@@ -3,7 +3,7 @@ GET http://localhost:3000/produtos
 Accept: application/json
 
 ### Buscar produto por ID
-GET http://localhost:3000/produtos/cc29b6e8-1dd7-4553-b93e-8bab6119d678
+GET http://localhost:3000/produtos/24f0431c-244c-4b52-b917-d9aa0c50b16d
 Accept: application/json
 
 

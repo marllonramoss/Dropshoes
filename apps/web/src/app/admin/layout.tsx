@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { Inter } from "next/font/google";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -11,6 +12,7 @@ export const metadata = {
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
     <div className={`min-h-screen bg-gray-100 ${inter.className}`}>
+      <Toaster position="top-right" />
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">

@@ -8,11 +8,6 @@ export interface ImagemProduto {
 }
 
 /**
- * Tipos de imagem suportados
- */
-export const TIPOS_IMAGEM_VALIDOS = ["jpg", "jpeg", "png", "webp"];
-
-/**
  * Funções utilitárias para validação de imagens
  */
 export const validadorImagem = {
@@ -29,14 +24,6 @@ export const validadorImagem = {
   },
 
   /**
-   * Verifica se a extensão da imagem é válida
-   */
-  extensaoValida(url: string): boolean {
-    const extensao = url.split(".").pop()?.toLowerCase() || "";
-    return TIPOS_IMAGEM_VALIDOS.includes(extensao);
-  },
-
-  /**
    * Valida todos os aspectos de uma imagem
    */
   validarImagem(imagem: ImagemProduto): string | null {
@@ -46,10 +33,6 @@ export const validadorImagem = {
 
     if (!this.urlValida(imagem.url)) {
       return "URL da imagem inválida";
-    }
-
-    if (!this.extensaoValida(imagem.url)) {
-      return `Tipo de imagem inválido. Tipos suportados: ${TIPOS_IMAGEM_VALIDOS.join(", ")}`;
     }
 
     if (!imagem.descricao || typeof imagem.descricao !== "string") {
