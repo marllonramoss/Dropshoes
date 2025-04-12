@@ -4,28 +4,46 @@ import { useState } from "react";
 import { useProducts } from "@/hooks/useProducts";
 import Link from "next/link";
 import { toast, Toaster } from "react-hot-toast";
+import { ConfirmationModal } from "@/components/ConfirmationModal";
 
 export default function ProdutosAdmin() {
   const { produtos, loading, error, excluir } = useProducts();
   const [excluindo, setExcluindo] = useState<string | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [produtoParaExcluir, setProdutoParaExcluir] = useState<string | null>(
+    null
+  );
 
   const handleExcluir = async (id: string) => {
-    if (confirm("Tem certeza que deseja excluir este produto?")) {
-      try {
-        setExcluindo(id);
-        await excluir(id);
-        toast.success("Produto excluído com sucesso!");
-      } catch (err) {
-        console.error("Erro ao excluir produto:", err);
-        toast.error(
-          err instanceof Error
-            ? err.message
-            : "Não foi possível excluir o produto"
-        );
-      } finally {
-        setExcluindo(null);
-      }
+    setProdutoParaExcluir(id);
+    setModalOpen(true);
+  };
+
+  const confirmarExclusao = async () => {
+    if (!produtoParaExcluir) return;
+    setModalOpen(false);
+
+    try {
+      setExcluindo(produtoParaExcluir);
+      await excluir(produtoParaExcluir);
+      toast.success("Produto excluído com sucesso!");
+    } catch (err) {
+      console.error("Erro ao excluir produto:", err);
+      toast.error(
+        err instanceof Error
+          ? err.message
+          : "Não foi possível excluir o produto"
+      );
+    } finally {
+      setExcluindo(null);
+      setModalOpen(false);
+      setProdutoParaExcluir(null);
     }
+  };
+
+  const cancelarExclusao = () => {
+    setModalOpen(false);
+    setProdutoParaExcluir(null);
   };
 
   if (loading) {
@@ -150,6 +168,16 @@ export default function ProdutosAdmin() {
           </table>
         </div>
       )}
+
+      <ConfirmationModal
+        isOpen={modalOpen}
+        onClose={cancelarExclusao}
+        onConfirm={confirmarExclusao}
+        title="Excluir Produto"
+        message="Tem certeza que deseja excluir este produto? Esta ação não pode ser desfeita."
+        confirmText="Excluir"
+        cancelText="Cancelar"
+      />
     </div>
   );
 }
