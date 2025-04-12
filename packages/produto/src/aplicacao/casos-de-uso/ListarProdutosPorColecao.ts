@@ -2,22 +2,13 @@ import { Produto } from "../../dominio/entidades/Produto";
 import { ProdutoRepository } from "../../dominio/repositorios/ProdutoRepository";
 import { ProdutoDTO } from "../dtos/ProdutoDTO";
 
-export class BuscarProdutoPorId {
+export class ListarProdutosPorColecao {
   constructor(private readonly produtoRepository: ProdutoRepository) {}
 
-  async executar(id: string): Promise<ProdutoDTO | null> {
-    if (!id) {
-      throw new Error("ID do produto é obrigatório");
-    }
+  async executar(colecaoId: string): Promise<ProdutoDTO[]> {
+    const produtos = await this.produtoRepository.listarPorColecao(colecaoId);
 
-    const produto = await this.produtoRepository.buscarPorId(id);
-
-    if (!produto) {
-      return null;
-    }
-
-    // Converter para DTO
-    return {
+    return produtos.map((produto) => ({
       id: produto.id,
       nome: produto.nome,
       marca: produto.marca,
@@ -30,6 +21,6 @@ export class BuscarProdutoPorId {
         nome: c.nome,
         slug: c.slug,
       })),
-    };
+    }));
   }
 }

@@ -1,12 +1,24 @@
+### Criar uma coleção para teste
+# @name criarColecao
+POST http://localhost:3000/colecoes
+Content-Type: application/json
+
+{
+    "nome": "Coleção Teste"
+}
+
 ### Listar todos os produtos
 GET http://localhost:3000/produtos
 Accept: application/json
 
-### Buscar produto por ID
-GET http://localhost:3000/produtos/24f0431c-244c-4b52-b917-d9aa0c50b16d
+### Listar produtos por coleção
+# @name listarProdutosPorColecao
+GET http://localhost:3000/produtos?colecaoId=colecao-padrao
 Accept: application/json
 
-
+### Buscar produto por ID
+GET http://localhost:3000/produtos/47cf30ba-6c18-4497-bad2-e653c238eaa2
+Accept: application/json
 
 ### Criar novo produto
 POST http://localhost:3000/produtos
@@ -14,7 +26,7 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "nome": "Adidas v7",
+  "nome": "Adidas v10",
   "marca": "Adidas",
   "tamanhos": [40],
   "preco": 799.90,
@@ -24,7 +36,8 @@ Accept: application/json
       "descricao": "Nike Air Force 1 - Vista frontal",
       "principal": true
     }
-  ]
+  ],
+  "colecaoIds": []
 }
 
 ### Editar um produto
@@ -47,7 +60,8 @@ Content-Type: application/json
       "descricao": "Vista lateral",
       "principal": false
     }
-  ]
+  ],
+  "colecaoIds": []
 }
 
 ### Remover produto

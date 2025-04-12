@@ -1,0 +1,81 @@
+@baseUrl = http://localhost:3000
+
+### Criar uma nova coleção (Verão)
+# @name criarColecaoVerao
+POST {{baseUrl}}/colecoes
+Content-Type: application/json
+
+{
+    "nome": "Verão 2024"
+}
+
+### Criar uma nova coleção (Inverno)
+# @name criarColecaoInverno
+POST {{baseUrl}}/colecoes
+Content-Type: application/json
+
+{
+    "nome": "Inverno 2024"
+}
+
+### Criar uma nova coleção (Outono)
+# @name criarColecaoOutono
+POST {{baseUrl}}/colecoes
+Content-Type: application/json
+
+{
+    "nome": "Outono 2024"
+}
+
+### Criar uma nova coleção (Primavera)
+# @name criarColecaoPrimavera
+POST {{baseUrl}}/colecoes
+Content-Type: application/json
+
+{
+    "nome": "Primavera 2024"
+}
+
+### Criar um novo produto com múltiplas coleções
+POST {{baseUrl}}/produtos
+Content-Type: application/json
+
+{
+    "nome": "Tênis Esportivo",
+    "marca": "Nike",
+    "tamanhos": [38, 39, 40, 41, 42],
+    "preco": 299.99,
+    "imagens": [
+        {
+            "url": "https://example.com/tenis1.jpg",
+            "descricao": "Vista frontal",
+            "principal": true
+        }
+    ],
+    "colecaoIds": [
+        "{{criarColecaoVerao.response.body.id}}",
+        "{{criarColecaoInverno.response.body.id}}"
+    ]
+}
+
+### Listar todas as coleções
+GET {{baseUrl}}/colecoes
+
+### Buscar uma coleção por ID (usando ID do Verão)
+GET {{baseUrl}}/colecoes/{{criarColecaoVerao.response.body.id}}
+
+### Editar uma coleção (usando ID do Inverno)
+PUT {{baseUrl}}/colecoes/{{criarColecaoInverno.response.body.id}}
+Content-Type: application/json
+
+{
+    "nome": "Inverno 2024 - Edição Especial"
+}
+
+### Adicionar coleção a um produto
+# @name adicionarColecaoAoProduto
+POST {{baseUrl}}/colecoes/c363149e-e16a-4638-bc30-990e0d03e2d4/produtos/47cf30ba-6c18-4497-bad2-e653c238eaa2
+# Substitua 123 pelo ID real do produto
+
+### Remover uma coleção (usando ID da Primavera)
+DELETE {{baseUrl}}/colecoes/{{criarColecaoInverno.response.body.id}} 

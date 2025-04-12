@@ -40,12 +40,24 @@ model ItemPedido {
   @@map("itens_pedido")
 }
 
+model Colecao {
+  id        String           @id @default(uuid())
+  nome      String
+  slug      String           @unique
+  produtos  ProdutoColecao[]
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@map("colecoes")
+}
+
 model Produto {
   id        String           @id @default(uuid())
   nome      String
   marca     String
   preco     Float
   slug      String           @unique
+  colecoes  ProdutoColecao[]
   tamanhos  TamanhoProduto[]
   imagens   ImagemProduto[]
   itens     ItemPedido[]
@@ -53,6 +65,20 @@ model Produto {
   updatedAt DateTime         @updatedAt
 
   @@map("produtos")
+}
+
+// Tabela de junção para relação muitos-para-muitos entre Produto e Colecao
+model ProdutoColecao {
+  id        String   @id @default(uuid())
+  produtoId String
+  colecaoId String
+  produto   Produto  @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+  colecao   Colecao  @relation(fields: [colecaoId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([produtoId, colecaoId])
+  @@map("produtos_colecoes")
 }
 
 model TamanhoProduto {

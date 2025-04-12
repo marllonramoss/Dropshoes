@@ -7,10 +7,23 @@ import { ImagemAdicionada } from "../eventos/ImagemAdicionada";
 import { ImagemRemovida } from "../eventos/ImagemRemovida";
 import { ImagemPrincipalAlterada } from "../eventos/ImagemPrincipalAlterada";
 import { DadosBasicosAtualizados } from "../eventos/DadosBasicosAtualizados";
+import { ColecaoAdicionada } from "../eventos/ColecaoAdicionada";
 import { GeradorDeId } from "../portas/GeradorDeId";
 import { TamanhoSapato } from "../objetos-valor/TamanhoSapato";
 import { Preco } from "../objetos-valor/Preco";
 import { ImagemProduto, validadorImagem } from "../tipos/ImagemProduto";
+import { Colecao } from "./Colecao";
+
+interface RestaurarProdutoProps {
+  id: string;
+  nome: string;
+  marca: string;
+  preco: number;
+  slug: string;
+  colecoes: Colecao[];
+  tamanhos: number[];
+  imagens: ImagemProduto[];
+}
 
 // Vamos criar este evento de domínio
 export class Produto {
@@ -21,6 +34,7 @@ export class Produto {
   private _preco: Preco;
   private _slug: string;
   private _imagens: ImagemProduto[] = [];
+  private _colecoes: Colecao[] = [];
   private _eventos: Evento[] = [];
 
   constructor(
@@ -30,7 +44,8 @@ export class Produto {
     tamanhos: TamanhoSapato[],
     preco: Preco,
     slug: string,
-    imagens: ImagemProduto[] = []
+    imagens: ImagemProduto[] = [],
+    colecoes: Colecao[] = []
   ) {
     this._id = id;
     this._nome = nome;
@@ -39,6 +54,7 @@ export class Produto {
     this._preco = preco;
     this._slug = slug;
     this._imagens = imagens;
+    this._colecoes = colecoes;
 
     // Encontrar a imagem principal, se existir
     const imagemPrincipal = this._imagens.find((img) => img.principal);
@@ -52,6 +68,13 @@ export class Produto {
         imagemPrincipal?.url
       )
     );
+
+    // Registrar eventos para cada coleção inicial
+    for (const colecao of this._colecoes) {
+      this._eventos.push(
+        new ColecaoAdicionada(this._id, colecao.id, colecao.nome)
+      );
+    }
   }
 
   // Getters
@@ -98,8 +121,12 @@ export class Produto {
     return this._imagens.find((img) => img.principal) || null;
   }
 
+  get colecoes(): Colecao[] {
+    return [...this._colecoes]; // Retorna uma cópia para evitar modificação externa
+  }
+
   get eventos(): Evento[] {
-    return [...this._eventos]; // Retorna uma cópia para evitar modificação externa
+    return [...this._eventos];
   }
 
   /**
@@ -373,6 +400,45 @@ export class Produto {
     }
   }
 
+  /**
+   * Adiciona uma coleção ao produto
+   */
+  public adicionarColecao(colecao: Colecao): void {
+    if (!colecao) {
+      throw new Error("Coleção não pode ser nula");
+    }
+
+    if (this.pertenceAColecao(colecao.id)) {
+      throw new Error("Produto já pertence a esta coleção");
+    }
+
+    this._colecoes.push(colecao);
+
+    // Registrar evento de adição de coleção
+    this._eventos.push(
+      new ColecaoAdicionada(this._id, colecao.id, colecao.nome)
+    );
+  }
+
+  /**
+   * Remove uma coleção do produto
+   */
+  public removerColecao(colecaoId: string): void {
+    const index = this._colecoes.findIndex((c) => c.id === colecaoId);
+    if (index === -1) {
+      throw new Error("Coleção não encontrada neste produto");
+    }
+
+    this._colecoes.splice(index, 1);
+  }
+
+  /**
+   * Verifica se o produto pertence a uma determinada coleção
+   */
+  public pertenceAColecao(colecaoId: string): boolean {
+    return this._colecoes.some((c) => c.id === colecaoId);
+  }
+
   // Método de fábrica para criar um novo produto
   static criar(
     nome: string,
@@ -380,78 +446,62 @@ export class Produto {
     tamanhos: number[],
     precoValor: number,
     geradorDeId: GeradorDeId,
-    imagens: { url: string; descricao: string; principal?: boolean }[] = []
+    imagens: { url: string; descricao: string; principal?: boolean }[] = [],
+    colecoes: Colecao[] = []
   ): Produto {
+    // Validações
     if (!nome) throw new Error("Nome do produto é obrigatório");
     if (!marca) throw new Error("Marca do produto é obrigatória");
     if (!tamanhos || tamanhos.length === 0)
-      throw new Error("É necessário informar pelo menos um tamanho disponível");
+      throw new Error("É necessário informar pelo menos um tamanho");
+    if (!geradorDeId) throw new Error("Gerador de ID é obrigatório");
 
-    // Converter números para objetos TamanhoSapato
-    const tamanhosSapato = tamanhos.map((t) => {
-      try {
-        return TamanhoSapato.criar(t);
-      } catch (error: any) {
-        throw new Error(`Tamanho inválido: ${t}. ${error.message}`);
-      }
-    });
-
-    // Criar objeto de valor para preço
-    let preco: Preco;
-    try {
-      preco = Preco.criar(precoValor);
-    } catch (error: any) {
-      throw new Error(`Preço inválido: ${error.message}`);
-    }
-
-    // Processar imagens
-    const imagensProduto: ImagemProduto[] = [];
-
-    // Verificar se há pelo menos uma imagem
-    if (imagens.length === 0) {
-      throw new Error(
-        "É necessário informar pelo menos uma imagem para o produto"
-      );
-    }
-
-    // Garantir que exista apenas uma imagem principal
-    let temImagemPrincipal = false;
-    for (const imgDados of imagens) {
-      if (imgDados.principal) {
-        if (temImagemPrincipal) {
-          throw new Error("Só pode haver uma imagem principal");
-        }
-        temImagemPrincipal = true;
-      }
-    }
-
-    // Se nenhuma imagem foi marcada como principal, a primeira será
-    if (!temImagemPrincipal && imagens.length > 0) {
-      imagens[0].principal = true;
-    }
-
-    // Validar e criar cópias das imagens
-    for (const imgDados of imagens) {
-      const imagem = {
-        url: imgDados.url,
-        descricao: imgDados.descricao,
-        principal: imgDados.principal || false,
-      };
-
-      // Validar a imagem
-      const erroValidacao = validadorImagem.validarImagem(imagem);
-      if (erroValidacao) {
+    // Validar tamanhos
+    for (const tamanho of tamanhos) {
+      if (!TamanhoSapato.ehValido(tamanho)) {
         throw new Error(
-          `Erro ao processar imagem ${imgDados.url}: ${erroValidacao}`
+          `Tamanho ${tamanho} não é válido. Tamanhos válidos são: ${TamanhoSapato.obterTamanhosValidos().join(
+            ", "
+          )}`
         );
       }
-
-      imagensProduto.push(imagem);
     }
 
+    // Criar objetos de valor
+    const tamanhosSapato = tamanhos.map((t) => TamanhoSapato.criar(t));
+    const preco = Preco.criar(precoValor);
+
+    // Validar imagens
+    const imagensValidadas: ImagemProduto[] = [];
+    for (const imagem of imagens) {
+      const erro = validadorImagem.validarImagem({
+        url: imagem.url,
+        descricao: imagem.descricao,
+        principal: imagem.principal || false,
+      });
+
+      if (erro) {
+        throw new Error(`Imagem inválida: ${erro}`);
+      }
+
+      imagensValidadas.push({
+        url: imagem.url,
+        descricao: imagem.descricao,
+        principal: imagem.principal || false,
+      });
+    }
+
+    // Verificar se há mais de uma imagem principal
+    const imagensPrincipais = imagensValidadas.filter((img) => img.principal);
+    if (imagensPrincipais.length > 1) {
+      throw new Error("Só pode haver uma imagem principal");
+    }
+
+    // Gerar ID e slug
     const id = geradorDeId.gerar();
     const slug = Produto.gerarSlugPublico(nome, marca);
 
+    // Criar produto com todas as coleções iniciais
     return new Produto(
       id,
       nome,
@@ -459,7 +509,8 @@ export class Produto {
       tamanhosSapato,
       preco,
       slug,
-      imagensProduto
+      imagensValidadas,
+      colecoes
     );
   }
 
@@ -484,5 +535,21 @@ export class Produto {
       .replace(/[^\w\s-]/g, "") // Remover caracteres especiais
       .replace(/\s+/g, "-") // Substituir espaços por hífens
       .replace(/-+/g, "-"); // Evitar hífens duplicados
+  }
+
+  static restaurar(props: RestaurarProdutoProps): Produto {
+    const tamanhos = props.tamanhos.map((t) => TamanhoSapato.criar(t));
+    const preco = Preco.criar(props.preco);
+
+    return new Produto(
+      props.id,
+      props.nome,
+      props.marca,
+      tamanhos,
+      preco,
+      props.slug,
+      props.imagens,
+      props.colecoes
+    );
   }
 }

@@ -9,6 +9,7 @@ import {
   HttpCode,
   HttpStatus,
   NotFoundException,
+  Query,
 } from '@nestjs/common';
 import {
   AdicionarProduto,
@@ -18,6 +19,7 @@ import {
   RemoverProduto,
   AdicionarProdutoDTO,
   EditarProdutoDTO,
+  ListarProdutosPorColecao,
 } from '@dropshoes/produto';
 
 @Controller('produtos')
@@ -28,6 +30,7 @@ export class ProdutosController {
     private readonly buscarProdutoPorId: BuscarProdutoPorId,
     private readonly editarProduto: EditarProduto,
     private readonly removerProduto: RemoverProduto,
+    private readonly listarProdutosPorColecao: ListarProdutosPorColecao,
   ) {}
 
   @Post()
@@ -36,7 +39,12 @@ export class ProdutosController {
   }
 
   @Get()
-  async listar() {
+  async listar(@Query('colecaoId') colecaoId?: string) {
+    // Se tiver colecaoId, usa o caso de uso específico
+    if (colecaoId) {
+      return await this.listarProdutosPorColecao.executar(colecaoId);
+    }
+    // Se não, lista todos
     return await this.listarProdutos.executar();
   }
 

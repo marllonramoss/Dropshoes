@@ -1,0 +1,57 @@
+### Criar um produto associado a uma coleção
+POST http://localhost:3000/produtos
+Content-Type: application/json
+
+{
+  "nome": "Tênis Esportivo",
+  "marca": "Nike",
+  "preco": 299.99,
+  "tamanhos": [38, 39, 40, 41, 42],
+  "colecaoId": "colecao-padrao",
+  "imagens": [
+    {
+      "url": "https://example.com/tenis1.jpg",
+      "descricao": "Vista frontal",
+      "principal": true
+    },
+    {
+      "url": "https://example.com/tenis2.jpg",
+      "descricao": "Vista lateral"
+    }
+  ]
+}
+
+### Criar outro produto na mesma coleção
+POST http://localhost:3000/produtos
+Content-Type: application/json
+
+{
+  "nome": "Tênis Casual",
+  "marca": "Adidas",
+  "preco": 259.99,
+  "tamanhos": [37, 38, 39, 40, 41],
+  "colecaoId": "colecao-padrao",
+  "imagens": [
+    {
+      "url": "https://example.com/tenis3.jpg",
+      "descricao": "Vista frontal",
+      "principal": true
+    },
+    {
+      "url": "https://example.com/tenis4.jpg",
+      "descricao": "Vista lateral"
+    }
+  ]
+}
+
+### Editar um produto mudando sua coleção
+# Substitua {id-do-produto} pelo ID real do produto que deseja editar
+PUT http://localhost:3000/produtos/{id-do-produto}
+Content-Type: application/json
+
+{
+  "nome": "Tênis Casual",
+  "marca": "Adidas",
+  "preco": 259.99,
+  "colecaoId": "nova-colecao-id"
+} 

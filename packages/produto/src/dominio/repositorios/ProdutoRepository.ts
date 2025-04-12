@@ -7,5 +7,6 @@ export interface ProdutoRepository {
   listarTodos(): Promise<Produto[]>;
   listarPorMarca(marca: string): Promise<Produto[]>;
   listarComTamanho(tamanho: number): Promise<Produto[]>;
+  listarPorColecao(colecaoId: string): Promise<Produto[]>;
   remover(id: string): Promise<boolean>;
 }

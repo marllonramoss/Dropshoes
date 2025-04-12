@@ -1,19 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { ProdutoRepository } from '@dropshoes/produto';
-import { Produto } from '@dropshoes/produto';
-import { TamanhoSapato } from '@dropshoes/produto';
-import { Preco } from '@dropshoes/produto';
-import { ImagemProduto } from '@dropshoes/produto';
+import { Produto, ProdutoRepository, Colecao } from '@dropshoes/produto';
 import {
   Produto as PrismaProduto,
   TamanhoProduto as PrismaTamanhoProduto,
   ImagemProduto as PrismaImagemProduto,
+  Colecao as PrismaColecao,
 } from '@prisma/client';
+
+type ProdutoColecao = {
+  colecao: PrismaColecao;
+};
 
 type ProdutoCompleto = PrismaProduto & {
   tamanhos: PrismaTamanhoProduto[];
   imagens: PrismaImagemProduto[];
+  colecoes: ProdutoColecao[];
 };
 
 @Injectable()
@@ -21,25 +23,40 @@ export class PrismaProdutosRepository implements ProdutoRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async salvar(produto: Produto): Promise<void> {
+    const tamanhos = produto.tamanhosNumericos.map((t) => ({
+      tamanho: t,
+    }));
+
+    const imagens = produto.imagens.map((img) => ({
+      url: img.url,
+      descricao: img.descricao,
+      principal: img.principal,
+    }));
+
+    // Obter os IDs das coleções do produto
+    const colecaoIds = produto.colecoes.map((c) => c.id);
+
     await this.prisma.produto.upsert({
       where: { id: produto.id },
       update: {
         nome: produto.nome,
         marca: produto.marca,
-        preco: produto.preco.valor,
+        preco: produto.precoNumerico,
         slug: produto.slug,
         tamanhos: {
           deleteMany: {},
-          create: produto.tamanhos.map((tamanho) => ({
-            tamanho: tamanho.valor,
-          })),
+          create: tamanhos,
         },
         imagens: {
           deleteMany: {},
-          create: produto.imagens.map((imagem) => ({
-            url: imagem.url,
-            descricao: imagem.descricao,
-            principal: imagem.principal,
+          create: imagens,
+        },
+        colecoes: {
+          deleteMany: {},
+          create: colecaoIds.map((colecaoId) => ({
+            colecao: {
+              connect: { id: colecaoId },
+            },
           })),
         },
       },
@@ -47,18 +64,19 @@ export class PrismaProdutosRepository implements ProdutoRepository {
         id: produto.id,
         nome: produto.nome,
         marca: produto.marca,
-        preco: produto.preco.valor,
+        preco: produto.precoNumerico,
         slug: produto.slug,
         tamanhos: {
-          create: produto.tamanhos.map((tamanho) => ({
-            tamanho: tamanho.valor,
-          })),
+          create: tamanhos,
         },
         imagens: {
-          create: produto.imagens.map((imagem) => ({
-            url: imagem.url,
-            descricao: imagem.descricao,
-            principal: imagem.principal,
+          create: imagens,
+        },
+        colecoes: {
+          create: colecaoIds.map((colecaoId) => ({
+            colecao: {
+              connect: { id: colecaoId },
+            },
           })),
         },
       },
@@ -71,12 +89,17 @@ export class PrismaProdutosRepository implements ProdutoRepository {
       include: {
         tamanhos: true,
         imagens: true,
+        colecoes: {
+          include: {
+            colecao: true,
+          },
+        },
       },
     });
 
     if (!produtoData) return null;
 
-    return this.mapearProdutoDoDb(produtoData as ProdutoCompleto);
+    return this.mapToDomain(produtoData);
   }
 
   async buscarPorSlug(slug: string): Promise<Produto | null> {
@@ -85,25 +108,56 @@ export class PrismaProdutosRepository implements ProdutoRepository {
       include: {
         tamanhos: true,
         imagens: true,
+        colecoes: {
+          include: {
+            colecao: true,
+          },
+        },
       },
     });
 
     if (!produtoData) return null;
 
-    return this.mapearProdutoDoDb(produtoData as ProdutoCompleto);
+    return this.mapToDomain(produtoData);
   }
 
   async listarTodos(): Promise<Produto[]> {
-    const produtosData = await this.prisma.produto.findMany({
+    const produtos = await this.prisma.produto.findMany({
       include: {
         tamanhos: true,
         imagens: true,
+        colecoes: {
+          include: {
+            colecao: true,
+          },
+        },
       },
     });
 
-    return produtosData.map((produtoData) =>
-      this.mapearProdutoDoDb(produtoData as ProdutoCompleto),
-    );
+    return produtos.map((produtoData) => this.mapToDomain(produtoData));
+  }
+
+  async listarPorColecao(colecaoId: string): Promise<Produto[]> {
+    const produtos = await this.prisma.produto.findMany({
+      where: {
+        colecoes: {
+          some: {
+            colecaoId,
+          },
+        },
+      },
+      include: {
+        tamanhos: true,
+        imagens: true,
+        colecoes: {
+          include: {
+            colecao: true,
+          },
+        },
+      },
+    });
+
+    return produtos.map((produtoData) => this.mapToDomain(produtoData));
   }
 
   async listarPorMarca(marca: string): Promise<Produto[]> {
@@ -112,12 +166,15 @@ export class PrismaProdutosRepository implements ProdutoRepository {
       include: {
         tamanhos: true,
         imagens: true,
+        colecoes: {
+          include: {
+            colecao: true,
+          },
+        },
       },
     });
 
-    return produtosData.map((produtoData) =>
-      this.mapearProdutoDoDb(produtoData as ProdutoCompleto),
-    );
+    return produtosData.map((produtoData) => this.mapToDomain(produtoData));
   }
 
   async listarComTamanho(tamanho: number): Promise<Produto[]> {
@@ -132,12 +189,15 @@ export class PrismaProdutosRepository implements ProdutoRepository {
       include: {
         tamanhos: true,
         imagens: true,
+        colecoes: {
+          include: {
+            colecao: true,
+          },
+        },
       },
     });
 
-    return produtosData.map((produtoData) =>
-      this.mapearProdutoDoDb(produtoData as ProdutoCompleto),
-    );
+    return produtosData.map((produtoData) => this.mapToDomain(produtoData));
   }
 
   async remover(id: string): Promise<boolean> {
@@ -151,27 +211,22 @@ export class PrismaProdutosRepository implements ProdutoRepository {
     }
   }
 
-  private mapearProdutoDoDb(produtoData: ProdutoCompleto): Produto {
-    const tamanhos = produtoData.tamanhos.map((t) =>
-      TamanhoSapato.criar(t.tamanho),
-    );
-
-    const preco = Preco.criar(produtoData.preco);
-
-    const imagens = produtoData.imagens.map((i) => ({
-      url: i.url,
-      descricao: i.descricao,
-      principal: i.principal,
-    })) as ImagemProduto[];
-
-    return new Produto(
-      produtoData.id,
-      produtoData.nome,
-      produtoData.marca,
-      tamanhos,
-      preco,
-      produtoData.slug,
-      imagens,
-    );
+  private mapToDomain(data: ProdutoCompleto): Produto {
+    return Produto.restaurar({
+      id: data.id,
+      nome: data.nome,
+      marca: data.marca,
+      preco: data.preco,
+      slug: data.slug,
+      tamanhos: data.tamanhos.map((t) => t.tamanho),
+      imagens: data.imagens.map((img) => ({
+        url: img.url,
+        descricao: img.descricao,
+        principal: img.principal,
+      })),
+      colecoes: data.colecoes.map(
+        (pc) => new Colecao(pc.colecao.id, pc.colecao.nome),
+      ),
+    });
   }
 }
