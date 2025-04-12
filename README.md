@@ -1,10 +1,10 @@
 # 👟 DropShoes
 
-E-commerce de calçados desenvolvido com arquitetura moderna, aplicando DDD (Domain-Driven Design) e Clean Architecture em um monorepo.
+E-commerce de calçados desenvolvido com arquitetura moderna, aplicando DDD (Domain-Driven Design) e Onion Architecture em um monorepo.
 
 ## 💡 Destaques Técnicos
 
-- **Arquitetura Moderna**: Monorepo com Turborepo + DDD + Clean Architecture
+- **Arquitetura Moderna**: Monorepo com Turborepo + DDD + Onion Architecture
 - **Módulos de Domínio**: Implementação de `Produtos` e `Compras` como bounded contexts isolados
 - **Frontend Moderno**: Next.js 15 com App Router, React Server Components e TailwindCSS
 - **Backend Robusto**: NestJS com princípios SOLID e design patterns
@@ -45,7 +45,7 @@ yarn test    # Testes
 ## 📝 Arquitetura
 
 - **Domain-Driven Design**: Módulos de domínio isolados com suas próprias regras de negócio
-- **Clean Architecture**: Separação clara entre domínio, aplicação e infraestrutura
+- **Onion Architecture**: Camadas concêntricas com domínio no centro, seguido por serviços de domínio e infraestrutura
 - **Monorepo**: Compartilhamento de código e configurações entre aplicações
 - **Type Safety**: TypeScript com configurações estritas em todo o projeto
 
