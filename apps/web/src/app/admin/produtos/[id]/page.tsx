@@ -2,7 +2,7 @@
 
 import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
-import { produtoService, NovoProdutoDTO } from "@/services/produtoService";
+import { api } from "@/services/api";
 import Link from "next/link";
 import { toast, Toaster } from "react-hot-toast";
 
@@ -12,6 +12,21 @@ interface EditarProdutoProps {
   }>;
 }
 
+// Interface para garantir que principal seja sempre booleano
+interface ImagemProdutoForm {
+  url: string;
+  descricao: string;
+  principal: boolean;
+}
+
+interface FormData {
+  nome: string;
+  marca: string;
+  tamanhos: number[];
+  preco: number;
+  imagens: ImagemProdutoForm[];
+}
+
 export default function EditarProduto({ params }: EditarProdutoProps) {
   const { id } = use(params);
   const router = useRouter();
@@ -19,7 +34,7 @@ export default function EditarProduto({ params }: EditarProdutoProps) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [formData, setFormData] = useState<NovoProdutoDTO>({
+  const [formData, setFormData] = useState<FormData>({
     nome: "",
     marca: "",
     tamanhos: [],
@@ -27,7 +42,7 @@ export default function EditarProduto({ params }: EditarProdutoProps) {
     imagens: [],
   });
 
-  const [novaImagem, setNovaImagem] = useState({
+  const [novaImagem, setNovaImagem] = useState<ImagemProdutoForm>({
     url: "",
     descricao: "",
     principal: false,
@@ -38,13 +53,16 @@ export default function EditarProduto({ params }: EditarProdutoProps) {
     const carregarProduto = async () => {
       try {
         setLoading(true);
-        const produto = await produtoService.buscarProdutoPorId(id);
+        const produto = await api.produtos.buscarPorId(id);
         setFormData({
-          nome: produto._nome,
-          marca: produto._marca,
-          tamanhos: produto._tamanhos.map((t) => t._valor),
-          preco: produto._preco._valor,
-          imagens: produto._imagens,
+          nome: produto.nome,
+          marca: produto.marca,
+          tamanhos: produto.tamanhos,
+          preco: produto.preco,
+          imagens: produto.imagens.map((img) => ({
+            ...img,
+            principal: img.principal || false, // Garante que principal é sempre booleano
+          })),
         });
         setError(null);
       } catch (err) {
@@ -75,7 +93,7 @@ export default function EditarProduto({ params }: EditarProdutoProps) {
     try {
       setSaving(true);
       setError(null);
-      await produtoService.atualizarProduto(id, formData);
+      await api.produtos.atualizar(id, formData);
       toast.success("Produto atualizado com sucesso!");
       router.push("/admin/produtos");
     } catch (err) {
@@ -198,10 +216,7 @@ export default function EditarProduto({ params }: EditarProdutoProps) {
             min="0"
             value={formData.preco || ""}
             onChange={(e) =>
-              setFormData({
-                ...formData,
-                preco: e.target.value ? parseFloat(e.target.value) : 0,
-              })
+              setFormData({ ...formData, preco: parseFloat(e.target.value) })
             }
             className="w-full px-3 py-2 border rounded-md"
             required
@@ -210,20 +225,20 @@ export default function EditarProduto({ params }: EditarProdutoProps) {
 
         {/* Tamanhos */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             Tamanhos *
           </label>
           <div className="flex flex-wrap gap-2 mb-2">
             {formData.tamanhos.map((tamanho) => (
               <span
                 key={tamanho}
-                className="inline-flex items-center bg-blue-100 text-blue-800 px-2 py-1 rounded"
+                className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
               >
                 {tamanho}
                 <button
                   type="button"
                   onClick={() => handleRemoveTamanho(tamanho)}
-                  className="ml-1 text-blue-600 hover:text-blue-800"
+                  className="ml-2 text-blue-600 hover:text-blue-800"
                 >
                   ×
                 </button>
@@ -231,40 +246,47 @@ export default function EditarProduto({ params }: EditarProdutoProps) {
             ))}
           </div>
           <div className="flex gap-2">
-            <select
-              onChange={(e) => handleAddTamanho(parseInt(e.target.value))}
-              className="px-3 py-2 border rounded-md"
-              value=""
-            >
-              <option value="">Selecione um tamanho</option>
-              {Array.from({ length: 15 }, (_, i) => i + 34).map((num) => (
-                <option key={num} value={num}>
-                  {num}
-                </option>
-              ))}
-            </select>
+            {Array.from({ length: 15 }, (_, i) => i + 34).map((tamanho) => (
+              <button
+                key={tamanho}
+                type="button"
+                onClick={() => handleAddTamanho(tamanho)}
+                className={`px-3 py-1 rounded-md text-sm font-medium ${
+                  formData.tamanhos.includes(tamanho)
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
+              >
+                {tamanho}
+              </button>
+            ))}
           </div>
         </div>
 
         {/* Imagens */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             Imagens
           </label>
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             {formData.imagens.map((imagem, index) => (
               <div
                 key={index}
-                className="flex items-center gap-4 p-2 bg-gray-50 rounded"
+                className="flex items-start space-x-4 p-4 border rounded-md"
               >
                 <img
                   src={imagem.url}
                   alt={imagem.descricao}
-                  className="w-16 h-16 object-cover"
+                  className="w-24 h-24 object-cover rounded"
                 />
                 <div className="flex-1">
                   <p className="text-sm font-medium">{imagem.descricao}</p>
                   <p className="text-xs text-gray-500">{imagem.url}</p>
+                  {imagem.principal && (
+                    <span className="inline-block mt-1 px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded">
+                      Principal
+                    </span>
+                  )}
                 </div>
                 <button
                   type="button"
@@ -275,55 +297,54 @@ export default function EditarProduto({ params }: EditarProdutoProps) {
                 </button>
               </div>
             ))}
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <input
-                type="url"
-                placeholder="URL da imagem"
-                value={novaImagem.url}
-                onChange={(e) =>
-                  setNovaImagem({ ...novaImagem, url: e.target.value })
-                }
-                className="px-3 py-2 border rounded-md"
-              />
-              <input
-                type="text"
-                placeholder="Descrição da imagem"
-                value={novaImagem.descricao}
-                onChange={(e) =>
-                  setNovaImagem({ ...novaImagem, descricao: e.target.value })
-                }
-                className="px-3 py-2 border rounded-md"
-              />
-              <div className="flex items-center gap-4">
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={novaImagem.principal}
-                    onChange={(e) =>
-                      setNovaImagem({
-                        ...novaImagem,
-                        principal: e.target.checked,
-                      })
-                    }
-                    className="mr-2"
-                  />
-                  Principal
-                </label>
-                <button
-                  type="button"
-                  onClick={handleAddImagem}
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                >
-                  Adicionar
-                </button>
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <input
+              type="text"
+              placeholder="URL da imagem"
+              value={novaImagem.url}
+              onChange={(e) =>
+                setNovaImagem({ ...novaImagem, url: e.target.value })
+              }
+              className="px-3 py-2 border rounded-md"
+            />
+            <input
+              type="text"
+              placeholder="Descrição da imagem"
+              value={novaImagem.descricao}
+              onChange={(e) =>
+                setNovaImagem({ ...novaImagem, descricao: e.target.value })
+              }
+              className="px-3 py-2 border rounded-md"
+            />
+            <div className="flex items-center space-x-4">
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={novaImagem.principal}
+                  onChange={(e) =>
+                    setNovaImagem({
+                      ...novaImagem,
+                      principal: e.target.checked,
+                    })
+                  }
+                  className="mr-2"
+                />
+                <span className="text-sm">Imagem principal</span>
+              </label>
+              <button
+                type="button"
+                onClick={handleAddImagem}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              >
+                Adicionar
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Botões */}
-        <div className="flex justify-end gap-4">
+        <div className="flex justify-end space-x-4">
           <Link
             href="/admin/produtos"
             className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
@@ -333,9 +354,9 @@ export default function EditarProduto({ params }: EditarProdutoProps) {
           <button
             type="submit"
             disabled={saving}
-            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-400"
           >
-            {saving ? "Salvando..." : "Salvar Alterações"}
+            {saving ? "Salvando..." : "Salvar"}
           </button>
         </div>
       </form>

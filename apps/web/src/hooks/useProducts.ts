@@ -1,110 +1,85 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  Product,
-  Collection,
-  getProducts,
-  getProductBySlug,
-  getProductsByCategory,
-  getProductsByCollection,
-  getFeaturedProducts,
-  getDiscountedProducts,
-  getCollections,
-  getFeaturedCollections,
-  getCollectionBySlug,
-  searchProducts,
-} from "@/mocks/api";
+import { ProdutoDTO, AdicionarProdutoDTO } from "@dropshoes/produto";
+import { api } from "@/services/api";
 
 interface UseProductsReturn {
-  // Produtos
-  allProducts: Product[];
-  featuredProducts: Product[];
-  discountedProducts: Product[];
-  getProductBySlug: (slug: string) => Product | undefined;
-  getProductsByCategory: (category: string) => Product[];
-  getProductsByCollection: (collectionId: string) => Product[];
-  searchProducts: (query: string) => Product[];
+  // Dados
+  produtos: ProdutoDTO[];
 
-  // Coleções
-  allCollections: Collection[];
-  featuredCollections: Collection[];
-  getCollectionBySlug: (slug: string) => Collection | undefined;
+  // Ações
+  buscarPorId: (id: string) => Promise<ProdutoDTO>;
+  buscarPorColecao: (colecaoId: string) => Promise<ProdutoDTO[]>;
+  criar: (produto: AdicionarProdutoDTO) => Promise<string>;
+  atualizar: (id: string, produto: Partial<ProdutoDTO>) => Promise<void>;
+  excluir: (id: string) => Promise<void>;
+  recarregar: () => Promise<void>;
 
   // Estado
   loading: boolean;
   error: Error | null;
 }
 
-/**
- * Hook para acessar produtos e coleções da loja
- */
 export function useProducts(): UseProductsReturn {
-  const [allProducts, setAllProducts] = useState<Product[]>([]);
-  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
-  const [discountedProducts, setDiscountedProducts] = useState<Product[]>([]);
-  const [allCollections, setAllCollections] = useState<Collection[]>([]);
-  const [featuredCollections, setFeaturedCollections] = useState<Collection[]>(
-    []
-  );
-  const [loading, setLoading] = useState<boolean>(true);
+  const [produtos, setProdutos] = useState<ProdutoDTO[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
+  const carregarProdutos = async () => {
+    try {
+      setLoading(true);
+      const data = await api.produtos.listar();
+      setProdutos(data);
+      setError(null);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err : new Error("Erro ao carregar produtos")
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Em um cenário real, faríamos requisições HTTP aqui
-        // mas como é um mock, estamos apenas chamando as funções
-        setLoading(true);
-
-        // Buscar produtos
-        const products = getProducts();
-        setAllProducts(products);
-
-        // Buscar produtos em destaque
-        const featured = getFeaturedProducts();
-        setFeaturedProducts(featured);
-
-        // Buscar produtos com desconto
-        const discounted = getDiscountedProducts();
-        setDiscountedProducts(discounted);
-
-        // Buscar coleções
-        const collections = getCollections();
-        setAllCollections(collections);
-
-        // Buscar coleções em destaque
-        const featuredCollections = getFeaturedCollections();
-        setFeaturedCollections(featuredCollections);
-
-        setLoading(false);
-      } catch (err) {
-        setError(
-          err instanceof Error
-            ? err
-            : new Error("Erro desconhecido ao buscar produtos")
-        );
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+    carregarProdutos();
   }, []);
 
-  return {
-    // Produtos
-    allProducts,
-    featuredProducts,
-    discountedProducts,
-    getProductBySlug,
-    getProductsByCategory,
-    getProductsByCollection,
-    searchProducts,
+  const buscarPorId = async (id: string) => {
+    return api.produtos.buscarPorId(id);
+  };
 
-    // Coleções
-    allCollections,
-    featuredCollections,
-    getCollectionBySlug,
+  const buscarPorColecao = async (colecaoId: string) => {
+    return api.produtos.buscarPorColecao(colecaoId);
+  };
+
+  const criar = async (produto: AdicionarProdutoDTO) => {
+    const id = await api.produtos.criar(produto);
+    await carregarProdutos();
+    return id;
+  };
+
+  const atualizar = async (id: string, produto: Partial<ProdutoDTO>) => {
+    await api.produtos.atualizar(id, produto);
+    await carregarProdutos();
+  };
+
+  const excluir = async (id: string) => {
+    await api.produtos.excluir(id);
+    await carregarProdutos();
+  };
+
+  return {
+    // Dados
+    produtos,
+
+    // Ações
+    buscarPorId,
+    buscarPorColecao,
+    criar,
+    atualizar,
+    excluir,
+    recarregar: carregarProdutos,
 
     // Estado
     loading,

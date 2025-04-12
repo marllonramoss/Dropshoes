@@ -1,43 +1,19 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { produtoService, Produto } from "@/services/produtoService";
+import { useState } from "react";
+import { useProducts } from "@/hooks/useProducts";
 import Link from "next/link";
 import { toast, Toaster } from "react-hot-toast";
 
 export default function ProdutosAdmin() {
-  const [produtos, setProdutos] = useState<Produto[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { produtos, loading, error, excluir } = useProducts();
   const [excluindo, setExcluindo] = useState<string | null>(null);
-
-  const carregarProdutos = async () => {
-    try {
-      setLoading(true);
-      const data = await produtoService.listarProdutos();
-      setProdutos(data);
-    } catch (err) {
-      console.error("Erro ao carregar produtos:", err);
-      toast.error("Erro ao carregar produtos");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    carregarProdutos();
-  }, []);
 
   const handleExcluir = async (id: string) => {
     if (confirm("Tem certeza que deseja excluir este produto?")) {
       try {
         setExcluindo(id);
-        await produtoService.excluirProduto(id);
-
-        // Atualiza o estado local removendo o produto excluído
-        setProdutos((prevProdutos) =>
-          prevProdutos.filter((produto) => produto._id !== id)
-        );
-
+        await excluir(id);
         toast.success("Produto excluído com sucesso!");
       } catch (err) {
         console.error("Erro ao excluir produto:", err);
@@ -54,6 +30,14 @@ export default function ProdutosAdmin() {
 
   if (loading) {
     return <div className="text-center py-10">Carregando produtos...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-10 text-red-600">
+        Erro ao carregar produtos: {error.message}
+      </div>
+    );
   }
 
   return (
@@ -98,17 +82,17 @@ export default function ProdutosAdmin() {
             <tbody className="bg-white divide-y divide-gray-200">
               {produtos.map((produto) => (
                 <tr
-                  key={produto._id}
-                  className={`hover:bg-gray-50 ${excluindo === produto._id ? "opacity-50" : ""}`}
+                  key={produto.id}
+                  className={`hover:bg-gray-50 ${excluindo === produto.id ? "opacity-50" : ""}`}
                 >
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="h-10 w-10 flex-shrink-0">
-                        {produto._imagens && produto._imagens[0] ? (
+                        {produto.imagens && produto.imagens[0] ? (
                           <img
                             className="h-10 w-10 rounded-full object-cover"
-                            src={produto._imagens[0].url}
-                            alt={produto._nome}
+                            src={produto.imagens[0].url}
+                            alt={produto.nome}
                           />
                         ) : (
                           <div className="h-10 w-10 rounded-full bg-gray-200" />
@@ -116,25 +100,25 @@ export default function ProdutosAdmin() {
                       </div>
                       <div className="ml-4">
                         <div className="text-sm font-medium text-gray-900">
-                          {produto._nome}
+                          {produto.nome}
                         </div>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {produto._marca}
+                    {produto.marca}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    R$ {(produto._preco._valor || 0).toFixed(2)}
+                    R$ {produto.preco.toFixed(2)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex flex-wrap gap-1">
-                      {(produto._tamanhos || []).map((tamanho) => (
+                      {produto.tamanhos.map((tamanho) => (
                         <span
-                          key={tamanho._valor}
+                          key={tamanho}
                           className="inline-block bg-gray-100 rounded px-2 py-1 text-xs text-gray-600"
                         >
-                          {tamanho._valor}
+                          {tamanho}
                         </span>
                       ))}
                     </div>
@@ -142,21 +126,21 @@ export default function ProdutosAdmin() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2">
                       <Link
-                        href={`/admin/produtos/${produto._id}`}
+                        href={`/admin/produtos/${produto.id}`}
                         className="text-blue-600 hover:text-blue-900"
                       >
                         Editar
                       </Link>
                       <button
-                        onClick={() => handleExcluir(produto._id)}
-                        disabled={excluindo === produto._id}
+                        onClick={() => handleExcluir(produto.id)}
+                        disabled={excluindo === produto.id}
                         className={`text-red-600 hover:text-red-900 ${
-                          excluindo === produto._id
+                          excluindo === produto.id
                             ? "opacity-50 cursor-not-allowed"
                             : ""
                         }`}
                       >
-                        {excluindo === produto._id ? "Excluindo..." : "Excluir"}
+                        {excluindo === produto.id ? "Excluindo..." : "Excluir"}
                       </button>
                     </div>
                   </td>

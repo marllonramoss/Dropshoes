@@ -2,21 +2,24 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { produtoService, NovoProdutoDTO } from "@/services/produtoService";
+import { useProducts } from "@/hooks/useProducts";
+import { AdicionarProdutoDTO } from "@dropshoes/produto";
 import Link from "next/link";
 import { toast, Toaster } from "react-hot-toast";
 
 export default function NovoProduto() {
   const router = useRouter();
+  const { criar } = useProducts();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [formData, setFormData] = useState<NovoProdutoDTO>({
+  const [formData, setFormData] = useState<AdicionarProdutoDTO>({
     nome: "",
     marca: "",
     tamanhos: [],
     preco: 0,
     imagens: [],
+    colecaoIds: [],
   });
 
   const [novaImagem, setNovaImagem] = useState({
@@ -67,21 +70,7 @@ export default function NovoProduto() {
       setLoading(true);
       setError(null);
 
-      // Log detalhado do payload
-      const payload = {
-        nome: formData.nome,
-        marca: formData.marca,
-        tamanhos: formData.tamanhos,
-        preco: Number(formData.preco),
-        imagens: formData.imagens.map((img) => ({
-          url: img.url,
-          descricao: img.descricao,
-          principal: Boolean(img.principal),
-        })),
-      };
-
-      console.log("Payload da requisição:", JSON.stringify(payload, null, 2));
-      await produtoService.criarProduto(payload);
+      await criar(formData);
       toast.success("Produto criado com sucesso!");
       router.push("/admin/produtos");
     } catch (error) {
