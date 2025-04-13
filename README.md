@@ -17,7 +17,7 @@ E-commerce de calçados desenvolvido com arquitetura moderna, aplicando DDD (Dom
 Frontend (Next.js 15)          Backend (NestJS)
 ├─ React 19                    ├─ TypeScript
 ├─ TailwindCSS                 ├─ Prisma (ORM)
-├─ TypeScript                  ├─ PostgreSQL
+├─ TypeScript                  ├─ Supabase
 └─ Shadcn/ui                   └─ Jest
 ```
 
