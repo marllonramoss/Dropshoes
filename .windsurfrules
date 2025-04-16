@@ -1,0 +1,46 @@
+# 🌐 Domain-Driven Design (DDD)
+
+- Cada pasta em `packages/` representa um bounded context (subdomínio).
+- Use a separação clara entre `domain`, `application`, `infrastructure` e `interface`.
+- Lógica de negócio vive nas entidades (no domínio), nunca nos UseCases.
+- UseCases apenas orquestram o fluxo chamando entidades, services e ports.
+- Use portas e adaptadores: interfaces no `application`, implementações no `infrastructure`.
+- Nunca acople useCases a bibliotecas externas ou banco de dados diretamente.
+- Entidades devem ter comportamento, não só dados.
+
+---
+
+# 🚀 Backend (NestJS com DDD)
+
+- Cada módulo NestJS representa uma interface de entrada para um subdomínio.
+- Controllers não têm lógica de negócio: apenas recebem requisições e disparam UseCases.
+- Use `execute(dto): output` como padrão de interface de UseCase.
+- Use `class-validator` somente nos DTOs no controller.
+- Cada camada (`domain`, `application`, etc.) vive separada por subdomínio.
+- Adapters implementam interfaces (ports) e ficam em `infrastructure`.
+- Use Dependency Injection com tokens baseados em interface (ports).
+- Teste UseCases e entidades isoladamente, sem acoplamento ao Nest.
+
+---
+
+# 💻 Frontend (Next.js + React)
+
+- Organize os recursos por domínio: `features/auth`, `features/orders`, etc.
+- Cada endpoint em `/api/` deve executar um único UseCase do backend.
+- Nada de lógica de negócio no frontend — apenas chamada ao backend + exibição.
+- Use React Query (TanStack Query) para data-fetching e sincronização de estado.
+- Use React Hook Form para formulários e Zod para validação.
+- Componentes devem ser puros, stateless sempre que possível.
+- Prefira `app/` router e componha páginas com `layout.tsx` e `page.tsx`.
+
+---
+
+# 🧱 Projeto Geral & Estilo
+
+- Use TypeScript com modo estrito ativado.
+- Nomeie arquivos de componentes em PascalCase.
+- Exporte componentes com exportação nomeada (`export function`).
+- Evite enums e `any`. Prefira objetos mapeadores e tipos explícitos.
+- Pastas em kebab-case (ex: `user-profile`, `auth-service`).
+- Use Prettier para formatação e ESLint com Airbnb/Next rules.
+- Centralize constantes e types em pastas como `@/shared/constants` e `@/shared/types`.

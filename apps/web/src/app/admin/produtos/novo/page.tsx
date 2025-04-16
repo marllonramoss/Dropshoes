@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useProducts } from "@/hooks/useProducts";
 import { AdicionarProdutoDTO } from "@dropshoes/produto";
 import Link from "next/link";
+import Image from "next/image";
 import { toast, Toaster } from "react-hot-toast";
 
 export default function NovoProduto() {
@@ -274,11 +275,15 @@ export default function NovoProduto() {
                 key={index}
                 className="flex items-center gap-4 p-2 bg-gray-50 rounded"
               >
-                <img
-                  src={imagem.url}
-                  alt={imagem.descricao}
-                  className="w-16 h-16 object-cover"
-                />
+                <div className="relative w-16 h-16">
+                  <Image
+                    src={imagem.url}
+                    alt={imagem.descricao}
+                    className="object-cover"
+                    fill
+                    sizes="64px"
+                  />
+                </div>
                 <div className="flex-1">
                   <p className="text-sm font-medium">{imagem.descricao}</p>
                   <p className="text-xs text-gray-500">{imagem.url}</p>

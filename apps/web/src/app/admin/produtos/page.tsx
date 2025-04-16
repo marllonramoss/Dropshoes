@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useProducts } from "@/hooks/useProducts";
 import Link from "next/link";
+import Image from "next/image";
 import { toast, Toaster } from "react-hot-toast";
 import { ConfirmationModal } from "@/components/ConfirmationModal";
 
@@ -107,11 +108,15 @@ export default function ProdutosAdmin() {
                     <div className="flex items-center">
                       <div className="h-10 w-10 flex-shrink-0">
                         {produto.imagens && produto.imagens[0] ? (
-                          <img
-                            className="h-10 w-10 rounded-full object-cover"
-                            src={produto.imagens[0].url}
-                            alt={produto.nome}
-                          />
+                          <div className="relative h-10 w-10">
+                            <Image
+                              className="rounded-full object-cover"
+                              src={produto.imagens[0].url}
+                              alt={produto.nome}
+                              fill
+                              sizes="40px"
+                            />
+                          </div>
                         ) : (
                           <div className="h-10 w-10 rounded-full bg-gray-200" />
                         )}

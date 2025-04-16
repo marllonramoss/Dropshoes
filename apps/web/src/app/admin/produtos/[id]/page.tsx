@@ -4,6 +4,7 @@ import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/services/api";
 import Link from "next/link";
+import Image from "next/image";
 import { toast, Toaster } from "react-hot-toast";
 
 interface EditarProdutoProps {
@@ -274,11 +275,15 @@ export default function EditarProduto({ params }: EditarProdutoProps) {
                 key={index}
                 className="flex items-start space-x-4 p-4 border rounded-md"
               >
-                <img
-                  src={imagem.url}
-                  alt={imagem.descricao}
-                  className="w-24 h-24 object-cover rounded"
-                />
+                <div className="relative w-24 h-24">
+                  <Image
+                    src={imagem.url}
+                    alt={imagem.descricao}
+                    className="object-cover rounded"
+                    fill
+                    sizes="96px"
+                  />
+                </div>
                 <div className="flex-1">
                   <p className="text-sm font-medium">{imagem.descricao}</p>
                   <p className="text-xs text-gray-500">{imagem.url}</p>

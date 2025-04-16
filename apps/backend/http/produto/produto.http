@@ -4,7 +4,7 @@ POST http://localhost:3000/colecoes
 Content-Type: application/json
 
 {
-    "nome": "Coleção Teste"
+    "nome": "Destaques"
 }
 
 ### Listar todos os produtos
@@ -13,7 +13,7 @@ Accept: application/json
 
 ### Listar produtos por coleção
 # @name listarProdutosPorColecao
-GET http://localhost:3000/produtos?colecaoId=colecao-padrao
+GET http://localhost:3000/produtos?colecaoId=74214086-43c2-4af0-9f0c-7037c0ebc56d
 Accept: application/json
 
 ### Buscar produto por ID
@@ -26,7 +26,7 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "nome": "Adidas v10",
+  "nome": "Adidas v12",
   "marca": "Adidas",
   "tamanhos": [40],
   "preco": 799.90,
@@ -37,7 +37,7 @@ Accept: application/json
       "principal": true
     }
   ],
-  "colecaoIds": []
+  "colecaoIds": ["e9046bca-68d9-43be-94f9-4dea025ff558"]
 }
 
 ### Editar um produto

@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function AdminDashboard() {
   return (
     <div>
@@ -8,12 +10,12 @@ export default function AdminDashboard() {
           <p className="text-gray-600 mb-4">
             Gerenciar todos os produtos da loja.
           </p>
-          <a
+          <Link
             href="/admin/produtos"
             className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
           >
             Acessar Produtos
-          </a>
+          </Link>
         </div>
       </div>
     </div>

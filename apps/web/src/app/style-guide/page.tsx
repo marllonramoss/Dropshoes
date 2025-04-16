@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { ShoppingCart, Heart, ChevronRight } from "lucide-react";
 import { colors } from "@/styles/theme";
 

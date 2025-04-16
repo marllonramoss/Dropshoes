@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { Inter } from "next/font/google";
 import { Toaster } from "react-hot-toast";
+import Link from "next/link";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,15 +23,15 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <a href="/admin" className="text-gray-600 hover:text-gray-800">
+              <Link href="/admin" className="text-gray-600 hover:text-gray-800">
                 Dashboard
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/admin/produtos"
                 className="text-gray-600 hover:text-gray-800"
               >
                 Produtos
-              </a>
+              </Link>
             </div>
           </div>
         </div>

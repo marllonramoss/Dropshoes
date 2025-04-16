@@ -7,6 +7,7 @@ import { api } from "@/services/api";
 interface UseProductsReturn {
   // Dados
   produtos: ProdutoDTO[];
+  featuredProducts: ProdutoDTO[];
 
   // Ações
   buscarPorId: (id: string) => Promise<ProdutoDTO>;
@@ -23,14 +24,23 @@ interface UseProductsReturn {
 
 export function useProducts(): UseProductsReturn {
   const [produtos, setProdutos] = useState<ProdutoDTO[]>([]);
+  const [featuredProducts, setFeaturedProducts] = useState<ProdutoDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+
+  // ID da coleção de destaque (você pode mover isso para um .env ou configuração)
+  const FEATURED_COLLECTION_ID = "featured";
 
   const carregarProdutos = async () => {
     try {
       setLoading(true);
-      const data = await api.produtos.listar();
-      setProdutos(data);
+      const [allProducts, featured] = await Promise.all([
+        api.produtos.listar(),
+        api.produtos.buscarPorColecao(FEATURED_COLLECTION_ID),
+      ]);
+
+      setProdutos(allProducts);
+      setFeaturedProducts(featured);
       setError(null);
     } catch (err) {
       setError(
@@ -72,6 +82,7 @@ export function useProducts(): UseProductsReturn {
   return {
     // Dados
     produtos,
+    featuredProducts,
 
     // Ações
     buscarPorId,
