@@ -38,37 +38,81 @@ export default function Header() {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex lg:gap-x-8">
-            <Link
-              href="/category/men"
-              className="text-sm font-medium text-gray-700 hover:text-gray-800"
+          <nav className="hidden lg:flex gap-x-2 items-center">
+            {/* Produtos com dropdown de marcas */}
+            <div className="relative group">
+              <a
+                href="#"
+                className="h-16 flex items-center px-4 text-sm font-medium text-gray-700"
+              >
+                Produtos
+              </a>
+              <div className="absolute left-0 top-full min-w-full bg-white shadow-lg rounded-b-md py-2 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity z-20">
+                <a
+                  href="#"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  Marca A
+                </a>
+                <a
+                  href="#"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  Marca B
+                </a>
+                <a
+                  href="#"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  Marca C
+                </a>
+              </div>
+            </div>
+            {/* Coleções com dropdown */}
+            <div className="relative group">
+              <a
+                href="#"
+                className="h-16 flex items-center px-4 text-sm font-medium text-gray-700"
+              >
+                Coleções
+              </a>
+              <div className="absolute left-0 top-full min-w-full bg-white shadow-lg rounded-b-md py-2 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity z-20">
+                <a
+                  href="#"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  Coleção A
+                </a>
+                <a
+                  href="#"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  Coleção B
+                </a>
+                <a
+                  href="#"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  Coleção C
+                </a>
+              </div>
+            </div>
+            {/* Night Shoes */}
+            <a
+              href="#"
+              className="relative h-16 flex items-center px-4 text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-white hover:bg-gradient-to-r hover:from-blue-900 hover:to-black hover:shadow-lg"
+              style={{ minWidth: '120px' }}
             >
-              Masculino
-            </Link>
-            <Link
-              href="/category/women"
-              className="text-sm font-medium text-gray-700 hover:text-gray-800"
-            >
-              Feminino
-            </Link>
-            <Link
-              href="/category/kids"
-              className="text-sm font-medium text-gray-700 hover:text-gray-800"
-            >
-              Infantil
-            </Link>
-            <Link
-              href="/category/sport"
-              className="text-sm font-medium text-gray-700 hover:text-gray-800"
-            >
-              Esportivo
-            </Link>
-            <Link
-              href="/category/sales"
-              className="text-sm font-medium text-red-600 hover:text-red-800"
+              <span className="absolute top-2 right-2 text-[10px] bg-pink-600 text-white px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wide shadow-md">new</span>
+              Night Shoes
+            </a>
+            {/* Ofertas - vermelho */}
+            <a
+              href="#"
+              className="h-16 flex items-center px-4 text-sm font-bold text-red-600 hover:text-red-800"
             >
               Ofertas
-            </Link>
+            </a>
           </nav>
 
           {/* Right side icons */}
@@ -125,36 +169,79 @@ export default function Header() {
       {isMenuOpen && (
         <div className="lg:hidden">
           <div className="space-y-1 px-2 pb-3 pt-2">
-            <Link
-              href="/category/men"
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+            {/* Produtos com dropdown simples */}
+            <div className="mb-2">
+              <a
+                href="#"
+                className="block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+              >
+                Produtos
+              </a>
+              <div className="pl-4">
+                <a
+                  href="#"
+                  className="block px-2 py-1 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  Marca A
+                </a>
+                <a
+                  href="#"
+                  className="block px-2 py-1 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  Marca B
+                </a>
+                <a
+                  href="#"
+                  className="block px-2 py-1 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  Marca C
+                </a>
+              </div>
+            </div>
+            {/* Coleções com dropdown simples */}
+            <div className="mb-2">
+              <a
+                href="#"
+                className="block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+              >
+                Coleções
+              </a>
+              <div className="pl-4">
+                <a
+                  href="#"
+                  className="block px-2 py-1 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  Coleção A
+                </a>
+                <a
+                  href="#"
+                  className="block px-2 py-1 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  Coleção B
+                </a>
+                <a
+                  href="#"
+                  className="block px-2 py-1 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  Coleção C
+                </a>
+              </div>
+            </div>
+            {/* Night Shoes */}
+            <a
+              href="#"
+              className="h-12 flex items-center rounded-md px-3 text-base font-medium text-gray-700 transition-colors duration-200 hover:text-white hover:bg-gradient-to-r hover:from-blue-900 hover:to-black"
+              style={{ minWidth: '120px' }}
             >
-              Masculino
-            </Link>
-            <Link
-              href="/category/women"
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
-            >
-              Feminino
-            </Link>
-            <Link
-              href="/category/kids"
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
-            >
-              Infantil
-            </Link>
-            <Link
-              href="/category/sport"
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900"
-            >
-              Esportivo
-            </Link>
-            <Link
-              href="/category/sales"
-              className="block rounded-md px-3 py-2 text-base font-medium text-red-600 hover:bg-gray-50 hover:text-red-800"
+              Night Shoes
+            </a>
+            {/* Ofertas - vermelho */}
+            <a
+              href="#"
+              className="block rounded-md px-3 py-2 text-base font-bold text-red-600 hover:text-red-800"
             >
               Ofertas
-            </Link>
+            </a>
           </div>
         </div>
       )}

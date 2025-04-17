@@ -65,8 +65,8 @@ export async function FeaturedProductsSection() {
       </div>
 
       <div className="flex justify-center mt-12">
-        <Link 
-          href="/produtos" 
+        <Link
+          href="/produtos"
           className="bg-zinc-950 text-white px-8 py-3 rounded-md hover:bg-zinc-900 transition-colors text-lg font-medium"
         >
           Ver Todos os Produtos

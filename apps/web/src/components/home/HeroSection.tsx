@@ -23,6 +23,21 @@ interface HeroSlide {
 
 const heroSlides: HeroSlide[] = [
   {
+    title: "Night Shoes: Para Quem Não Volta Cedo",
+    description:
+      "Criados para noites intensas, encontros inesperados e ruas cheias de energia. O estilo que acompanha seu ritmo até o último bar.",
+    image:
+      "https://images.pexels.com/photos/18462149/pexels-photo-18462149/free-photo-of-person-walking-on-wet-street-against-illuminated-city-at-night.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    primaryButton: {
+      text: "Ver Night Shoes",
+      href: "#",
+    },
+    secondaryButton: {
+      text: "Conheça a Coleção",
+      href: "#",
+    },
+  },
+  {
     title: "Estilo e Conforto para seus Passos",
     description:
       "Descubra nossa nova coleção de tênis, combinando design moderno com materiais sustentáveis e tecnologia de ponta.",
