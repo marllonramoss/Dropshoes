@@ -1,13 +1,22 @@
 import { getAllCollections } from "@/services/collections";
-import { CollectionsClientProvider } from "@/contexts/collections-context";
+import { getAllCollectionsGrouped } from "@/services/collections";
+import { CollectionsProvider as CollectionsProviderInner } from "@/contexts/collections-context";
 
 export const dynamic = "force-static";
 
-export async function CollectionsProvider({ children }: { children: React.ReactNode }) {
+export async function CollectionsProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const colecoes = await getAllCollections();
+  const colecoesAgrupadas = await getAllCollectionsGrouped();
   return (
-    <CollectionsClientProvider colecoes={colecoes}>
+    <CollectionsProviderInner
+      colecoes={colecoes}
+      colecoesAgrupadas={colecoesAgrupadas}
+    >
       {children}
-    </CollectionsClientProvider>
+    </CollectionsProviderInner>
   );
 }

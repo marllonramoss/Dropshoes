@@ -19,6 +19,7 @@ import {
   RemoverColecao,
   AdicionarColecaoAoProdutoUseCase,
   ListarColecoesPorTipoUseCase,
+  ListarColecoesAgrupadasPorTipoUseCase,
 } from '@dropshoes/produto';
 
 @Controller('colecoes')
@@ -31,7 +32,17 @@ export class ColecoesController {
     private readonly removerColecao: RemoverColecao,
     private readonly adicionarColecaoAoProduto: AdicionarColecaoAoProdutoUseCase,
     private readonly listarColecoesPorTipo: ListarColecoesPorTipoUseCase,
+    private readonly listarColecoesAgrupadasPorTipo: ListarColecoesAgrupadasPorTipoUseCase,
   ) {}
+
+  /**
+   * Lista coleções agrupadas por tipo
+   * GET /colecoes/agrupadas
+   */
+  @Get('agrupadas')
+  async listarAgrupadas() {
+    return await this.listarColecoesAgrupadasPorTipo.executar();
+  }
 
   /**
    * Cria uma nova coleção

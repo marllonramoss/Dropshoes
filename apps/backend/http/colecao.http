@@ -79,5 +79,9 @@ Content-Type: application/json
 POST {{baseUrl}}/colecoes/c363149e-e16a-4638-bc30-990e0d03e2d4/produtos/47cf30ba-6c18-4497-bad2-e653c238eaa2
 # Substitua 123 pelo ID real do produto
 
+### Listar coleções agrupadas por tipo
+# @name listarColecoesAgrupadas
+GET {{baseUrl}}/colecoes/agrupadas
+
 ### Remover uma coleção (usando ID da Primavera)
 DELETE {{baseUrl}}/colecoes/{{criarColecaoInverno.response.body.id}} 

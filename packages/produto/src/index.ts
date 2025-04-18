@@ -53,6 +53,7 @@ export * from "./aplicacao/casos-de-uso/EditarColecaoUseCase";
 export * from "./aplicacao/casos-de-uso/RemoverColecaoUseCase";
 export * from "./aplicacao/casos-de-uso/AdicionarColecaoAoProdutoUseCase";
 export { ListarColecoesPorTipoUseCase } from "./aplicacao/casos-de-uso/ListarColecoesPorTipoUseCase";
+export { ListarColecoesAgrupadasPorTipoUseCase } from "./aplicacao/casos-de-uso/ListarColecoesAgrupadasPorTipoUseCase";
 
 // DTOs de Coleções
 export * from "./aplicacao/dtos/ColecaoDTO";

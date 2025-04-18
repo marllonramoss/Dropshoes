@@ -2,12 +2,22 @@
 import { createContext, useContext } from "react";
 import { ColecaoDTO } from "@/services/collections";
 
-export const CollectionsContext = createContext<ColecaoDTO[] | null>(null);
+export type ColecoesAgrupadas = Record<string, ColecaoDTO[]>;
 
+export type CollectionsContextType = {
+  colecoes: ColecaoDTO[];
+  colecoesAgrupadas: ColecoesAgrupadas;
+};
 
-export function CollectionsClientProvider({ colecoes, children }: { colecoes: ColecaoDTO[]; children: React.ReactNode }) {
+export const CollectionsContext = createContext<CollectionsContextType | null>(null);
+
+export function CollectionsProvider({ colecoes, colecoesAgrupadas, children }: {
+  colecoes: ColecaoDTO[];
+  colecoesAgrupadas: ColecoesAgrupadas;
+  children: React.ReactNode;
+}) {
   return (
-    <CollectionsContext.Provider value={colecoes}>
+    <CollectionsContext.Provider value={{ colecoes, colecoesAgrupadas }}>
       {children}
     </CollectionsContext.Provider>
   );
