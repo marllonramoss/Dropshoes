@@ -13,7 +13,7 @@ import { ProductCard } from "@/components/product/ProductCard";
 
 export function Catalogo({ items }: CatalogoProps) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-12">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {items.map((product) => (
         <div key={product.id} className="bg-white rounded-lg shadow p-4">
           <div className="aspect-square relative bg-zinc-100 rounded-lg overflow-hidden">

@@ -42,7 +42,7 @@ export function CatalogoSidebar() {
   }
 
   return (
-    <aside className="w-full max-w-xs bg-white rounded-2xl shadow-lg p-6 flex flex-col gap-6 sticky top-16">
+    <aside className="w-full max-w-xs bg-white rounded-2xl shadow-lg p-6 flex flex-col gap-6 sticky top-16 mt-12">
       <div className="flex items-center justify-between mb-2">
         <h2 className="text-xl font-bold tracking-tight text-zinc-900">Filtrar por</h2>
         <button className="text-sm text-zinc-500 hover:text-zinc-950 underline" type="button" onClick={limparFiltros}>Limpar filtros</button>
