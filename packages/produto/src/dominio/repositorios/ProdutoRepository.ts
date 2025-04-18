@@ -9,4 +9,5 @@ export interface ProdutoRepository {
   listarComTamanho(tamanho: number): Promise<Produto[]>;
   listarPorColecao(colecaoId: string): Promise<Produto[]>;
   remover(id: string): Promise<boolean>;
+  listarPaginado(page: number, pageSize: number): Promise<{ items: Produto[]; total: number }>;
 }

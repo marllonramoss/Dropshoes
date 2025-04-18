@@ -24,6 +24,8 @@ type Product = {
   colecoes: ColecaoDTO[];
 };
 
+import { ProductCard } from "@/components/product/ProductCard";
+
 export async function FeaturedProductsSection() {
   const products = await getFeaturedProducts();
   const displayProducts = products.slice(0, 8);

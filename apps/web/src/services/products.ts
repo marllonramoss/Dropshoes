@@ -21,6 +21,21 @@ type Product = {
   colecoes: ColecaoDTO[];
 };
 
+export type PaginatedProducts = {
+  items: Product[];
+  total: number;
+  page: number;
+  pageSize: number;
+};
+
+export async function getPaginatedProducts(page = 1, pageSize = 12): Promise<PaginatedProducts> {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const url = `${apiUrl}/produtos?page=${page}&pageSize=${pageSize}`;
+  const response = await fetch(url);
+  if (!response.ok) throw new Error("Falha ao carregar produtos");
+  return response.json();
+}
+
 export async function getFeaturedProducts(): Promise<Product[]> {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const url = `${apiUrl}/produtos?colecaoId=74214086-43c2-4af0-9f0c-7037c0ebc56d`;
