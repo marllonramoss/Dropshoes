@@ -4,8 +4,14 @@ import { ProdutoDTO } from "../dtos/ProdutoDTO";
 export class ListarProdutosPaginado {
   constructor(private readonly produtoRepository: ProdutoRepository) {}
 
-  async executar(page: number, pageSize: number) {
-    const { items, total } = await this.produtoRepository.listarPaginado(page, pageSize);
+  /**
+   * Lista produtos paginados, com filtro opcional por múltiplas marcas.
+   * @param page Página
+   * @param pageSize Tamanho da página
+   * @param marcas Filtro de marcas (array)
+   */
+  async executar(page: number, pageSize: number, marcas?: string[]) {
+    const { items, total } = await this.produtoRepository.listarPaginado(page, pageSize, marcas);
 
     return {
       items: items.map((produto) => ({

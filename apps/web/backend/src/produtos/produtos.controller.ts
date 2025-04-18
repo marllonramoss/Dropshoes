@@ -44,12 +44,24 @@ export class ProdutosController {
   async listar(
     @Query('page') page = 1,
     @Query('pageSize') pageSize = 12,
-    @Query('colecaoId') colecaoId?: string
+    @Query('colecaoId') colecaoId?: string,
+    @Query('marca') marca?: string | string[],
   ) {
     if (colecaoId) {
       return await this.listarProdutosPorColecao.executar(colecaoId);
     }
-    return await this.listarProdutosPaginado.executar(Number(page), Number(pageSize));
+    // Normaliza sempre para array
+    const marcasArray = marca
+      ? Array.isArray(marca)
+        ? marca
+        : [marca]
+      : [];
+    // Agora passando o filtro de marcas para o use case
+    return await this.listarProdutosPaginado.executar(
+      Number(page),
+      Number(pageSize),
+      marcasArray.length > 0 ? marcasArray : undefined
+    );
   }
 
   @Get(':id')

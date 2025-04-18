@@ -137,12 +137,19 @@ export class PrismaProdutosRepository implements ProdutoRepository {
     return produtos.map((produtoData) => this.mapToDomain(produtoData));
   }
 
-  async listarPaginado(page: number, pageSize: number): Promise<{ items: Produto[]; total: number }> {
+  async listarPaginado(page: number, pageSize: number, marcas?: string[]): Promise<{ items: Produto[]; total: number }> {
+    let where: any = {};
+
+    if (marcas && marcas.length > 0) {
+      where.marca = { in: marcas };
+    }
+
     const [produtos, total] = await Promise.all([
       this.prisma.produto.findMany({
         skip: (page - 1) * pageSize,
         take: pageSize,
         orderBy: { nome: 'asc' },
+        where,
         include: {
           tamanhos: true,
           imagens: true,
@@ -151,7 +158,7 @@ export class PrismaProdutosRepository implements ProdutoRepository {
           },
         },
       }),
-      this.prisma.produto.count(),
+      this.prisma.produto.count({ where }),
     ]);
     return {
       items: produtos.map((produtoData) => this.mapToDomain(produtoData)),

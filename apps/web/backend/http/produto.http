@@ -71,3 +71,7 @@ DELETE http://localhost:3000/produtos/7ed8d307-8628-49fa-8d7e-9b33385edbaa
 GET http://localhost:3000/produtos?page=1&pageSize=12
 Accept: application/json
 
+### Listar produtos por múltiplas marcas
+GET http://localhost:3000/produtos?marca=Nike&marca=Adidas&page=1&pageSize=5
+Accept: application/json
+

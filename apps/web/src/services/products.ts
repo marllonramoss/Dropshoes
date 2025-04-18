@@ -28,9 +28,16 @@ export type PaginatedProducts = {
   pageSize: number;
 };
 
-export async function getPaginatedProducts(page = 1, pageSize = 12): Promise<PaginatedProducts> {
+export async function getPaginatedProducts(page = 1, pageSize = 12, marcas?: string[]): Promise<PaginatedProducts> {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-  const url = `${apiUrl}/produtos?page=${page}&pageSize=${pageSize}`;
+  const params = new URLSearchParams({
+    page: String(page),
+    pageSize: String(pageSize),
+  });
+  if (marcas && marcas.length > 0) {
+    marcas.forEach((m) => params.append("marca", m));
+  }
+  const url = `${apiUrl}/produtos?${params.toString()}`;
   const response = await fetch(url);
   if (!response.ok) throw new Error("Falha ao carregar produtos");
   return response.json();
