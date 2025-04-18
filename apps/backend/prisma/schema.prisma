@@ -44,6 +44,7 @@ model Colecao {
   id        String           @id @default(uuid())
   nome      String
   slug      String           @unique
+  tipo      String           @default("outra-categoria")
   produtos  ProdutoColecao[]
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt

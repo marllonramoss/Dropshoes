@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { Colecao, ColecaoRepository } from '@dropshoes/produto';
+import { Colecao, ColecaoRepository, TipoColecao } from '@dropshoes/produto';
 import { Prisma, Colecao as PrismaColecao } from '@prisma/client';
 
 @Injectable()
@@ -46,6 +46,11 @@ export class ColecaoPrismaRepository implements ColecaoRepository {
     return colecoes.map(this.mapToDomain);
   }
 
+  async listarPorTipo(tipo: TipoColecao): Promise<Colecao[]> {
+    const colecoes = await this.prisma.colecao.findMany({ where: { tipo } });
+    return colecoes.map(this.mapToDomain);
+  }
+
   async remover(id: string): Promise<boolean> {
     try {
       await this.prisma.colecao.delete({
@@ -58,6 +63,6 @@ export class ColecaoPrismaRepository implements ColecaoRepository {
   }
 
   private mapToDomain(colecaoData: PrismaColecao): Colecao {
-    return new Colecao(colecaoData.id, colecaoData.nome);
+    return new Colecao(colecaoData.id, colecaoData.nome, colecaoData.tipo as TipoColecao);
   }
 }

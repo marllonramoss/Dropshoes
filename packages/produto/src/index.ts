@@ -1,6 +1,7 @@
 // Entidades
 export { Produto } from "./dominio/entidades/Produto";
 export { Colecao } from "./dominio/entidades/Colecao";
+export type { TipoColecao } from "./dominio/entidades/Colecao";
 
 // Objetos de valor
 export { TamanhoSapato } from "./dominio/objetos-valor/TamanhoSapato";
@@ -51,6 +52,7 @@ export * from "./aplicacao/casos-de-uso/BuscarColecaoPorIdUseCase";
 export * from "./aplicacao/casos-de-uso/EditarColecaoUseCase";
 export * from "./aplicacao/casos-de-uso/RemoverColecaoUseCase";
 export * from "./aplicacao/casos-de-uso/AdicionarColecaoAoProdutoUseCase";
+export { ListarColecoesPorTipoUseCase } from "./aplicacao/casos-de-uso/ListarColecoesPorTipoUseCase";
 
 // DTOs de Coleções
 export * from "./aplicacao/dtos/ColecaoDTO";

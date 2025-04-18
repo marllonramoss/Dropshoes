@@ -29,6 +29,7 @@ export class BuscarProdutoPorId {
         id: c.id,
         nome: c.nome,
         slug: c.slug,
+        tipo: c.tipo,
       })),
     };
   }

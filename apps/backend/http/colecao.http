@@ -32,9 +32,11 @@ Content-Type: application/json
 POST {{baseUrl}}/colecoes
 Content-Type: application/json
 
-{
-    "nome": "Primavera 2024"
-}
+
+### Listar coleções por tipo
+# @name listarColecoesPorTipo
+GET {{baseUrl}}/colecoes/por-tipo/marca
+
 
 ### Criar um novo produto com múltiplas coleções
 POST {{baseUrl}}/produtos

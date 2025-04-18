@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ProdutosController } from './produtos.controller';
 import { ColecoesController } from './colecoes.controller';
+import { ListarColecoesPorTipoUseCase } from '@dropshoes/produto';
 import {
   AdicionarProduto,
   ListarProdutos,
@@ -78,6 +79,12 @@ export const GERADOR_DE_ID = 'GERADOR_DE_ID';
     {
       provide: ListarColecoes,
       useFactory: (colecaoRepository) => new ListarColecoes(colecaoRepository),
+      inject: [COLECAO_REPOSITORY],
+    },
+    {
+      provide: ListarColecoesPorTipoUseCase,
+      useFactory: (colecaoRepository) =>
+        new ListarColecoesPorTipoUseCase(colecaoRepository),
       inject: [COLECAO_REPOSITORY],
     },
     {

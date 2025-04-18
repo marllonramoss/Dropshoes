@@ -12,11 +12,13 @@ import {
 } from '@nestjs/common';
 import {
   AdicionarColecao,
+  TipoColecao,
   ListarColecoes,
   BuscarColecaoPorId,
   EditarColecao,
   RemoverColecao,
   AdicionarColecaoAoProdutoUseCase,
+  ListarColecoesPorTipoUseCase,
 } from '@dropshoes/produto';
 
 @Controller('colecoes')
@@ -28,10 +30,19 @@ export class ColecoesController {
     private readonly editarColecao: EditarColecao,
     private readonly removerColecao: RemoverColecao,
     private readonly adicionarColecaoAoProduto: AdicionarColecaoAoProdutoUseCase,
+    private readonly listarColecoesPorTipo: ListarColecoesPorTipoUseCase,
   ) {}
 
+  /**
+   * Cria uma nova coleção
+   * Exemplo de body:
+   * {
+   *   "nome": "Nike",
+   *   "tipo": "marca" // ou "genero", "faixa-etaria", "geral"
+   * }
+   */
   @Post()
-  async criar(@Body() dto: { nome: string }) {
+  async criar(@Body() dto: { nome: string; tipo: TipoColecao }) {
     return await this.adicionarColecao.executar(dto);
   }
 
@@ -51,8 +62,16 @@ export class ColecoesController {
     return colecao;
   }
 
+  /**
+   * Edita uma coleção existente
+   * Exemplo de body:
+   * {
+   *   "nome": "Nike Atualizada",
+   *   "tipo": "marca" // ou "genero", "faixa-etaria", "geral"
+   * }
+   */
   @Put(':id')
-  async editar(@Param('id') id: string, @Body() dto: { nome: string }) {
+  async editar(@Param('id') id: string, @Body() dto: { nome: string; tipo: TipoColecao }) {
     return await this.editarColecao.executar(id, dto);
   }
 
@@ -60,6 +79,15 @@ export class ColecoesController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async remover(@Param('id') id: string): Promise<void> {
     await this.removerColecao.executar(id);
+  }
+
+  /**
+   * Lista coleções filtrando pelo tipo
+   * Exemplo: GET /colecoes/por-tipo/faixa-etaria
+   */
+  @Get('por-tipo/:tipo')
+  async listarPorTipo(@Param('tipo') tipo: TipoColecao) {
+    return await this.listarColecoesPorTipo.executar(tipo);
   }
 
   @Post(':colecaoId/produtos/:produtoId')

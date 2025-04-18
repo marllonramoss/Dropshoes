@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { Produto, ProdutoRepository, Colecao } from '@dropshoes/produto';
+import { Produto, ProdutoRepository, Colecao, TipoColecao } from '@dropshoes/produto';
 import {
   Produto as PrismaProduto,
   TamanhoProduto as PrismaTamanhoProduto,
@@ -225,7 +225,7 @@ export class PrismaProdutosRepository implements ProdutoRepository {
         principal: img.principal,
       })),
       colecoes: data.colecoes.map(
-        (pc) => new Colecao(pc.colecao.id, pc.colecao.nome),
+        (pc) => new Colecao(pc.colecao.id, pc.colecao.nome, pc.colecao.tipo as TipoColecao),
       ),
     });
   }

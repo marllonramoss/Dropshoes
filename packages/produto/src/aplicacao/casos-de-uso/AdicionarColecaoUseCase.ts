@@ -10,13 +10,14 @@ export class AdicionarColecao {
   ) {}
 
   async executar(dto: AdicionarColecaoDTO) {
-    const colecao = Colecao.criar(dto.nome, this.geradorDeId);
+    const colecao = Colecao.criar(dto.nome, dto.tipo, this.geradorDeId);
     await this.colecaoRepository.salvar(colecao);
 
     return {
       id: colecao.id,
       nome: colecao.nome,
       slug: colecao.slug,
+      tipo: colecao.tipo,
     };
   }
 }

@@ -13,6 +13,7 @@ export class BuscarColecaoPorId {
       id: colecao.id,
       nome: colecao.nome,
       slug: colecao.slug,
+      tipo: colecao.tipo,
     };
   }
 }

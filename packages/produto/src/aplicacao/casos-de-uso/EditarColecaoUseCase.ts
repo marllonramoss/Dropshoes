@@ -14,13 +14,14 @@ export class EditarColecao {
     if (!colecao) return null;
 
     // Criar nova instância com os dados atualizados
-    const colecaoAtualizada = new Colecao(id, dto.nome);
+    const colecaoAtualizada = new Colecao(id, dto.nome, dto.tipo);
     await this.colecaoRepository.salvar(colecaoAtualizada);
 
     return {
       id: colecaoAtualizada.id,
       nome: colecaoAtualizada.nome,
       slug: colecaoAtualizada.slug,
+      tipo: colecaoAtualizada.tipo,
     };
   }
 }
