@@ -14,7 +14,6 @@ type ProductCardProps = {
 };
 
 export function ProductCard({ nome, preco, imagens }: ProductCardProps) {
-  const hasDiscount = product.discount !== undefined;
 
   // Função para formatar preço em reais
   const formatPrice = (price: number) => {
@@ -26,7 +25,6 @@ export function ProductCard({ nome, preco, imagens }: ProductCardProps) {
 
   // Função para adicionar ao carrinho (será implementada mais tarde com um estado global)
   const handleAddToCart = () => {
-    console.log("Adicionar ao carrinho:", product);
     // TODO: Integrar com contexto de carrinho
   };
 

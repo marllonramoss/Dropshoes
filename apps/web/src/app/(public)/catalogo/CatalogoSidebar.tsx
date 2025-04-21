@@ -106,7 +106,7 @@ export function CatalogoSidebar() {
 
       {/* Botão aplicar */}
       <button
-        className="mt-2 bg-zinc-950 text-white py-2 rounded-lg hover:bg-zinc-900 transition-colors font-medium"
+        className="mt-2 bg-zinc-950 text-white py-2 rounded-lg hover:bg-zinc-900 transition-colors font-medium cursor-pointer"
         type="button"
         onClick={aplicarFiltros}
         disabled={selectedMarcas.length === 0 && precoMax === 1500}
