@@ -137,11 +137,14 @@ export class PrismaProdutosRepository implements ProdutoRepository {
     return produtos.map((produtoData) => this.mapToDomain(produtoData));
   }
 
-  async listarPaginado(page: number, pageSize: number, marcas?: string[]): Promise<{ items: Produto[]; total: number }> {
+  async listarPaginado(page: number, pageSize: number, marcas?: string[], precoMax?: number): Promise<{ items: Produto[]; total: number }> {
     let where: any = {};
 
     if (marcas && marcas.length > 0) {
       where.marca = { in: marcas };
+    }
+    if (precoMax !== undefined) {
+      where.preco = { ...(where.preco || {}), lte: precoMax };
     }
 
     const [produtos, total] = await Promise.all([

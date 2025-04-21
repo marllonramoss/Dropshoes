@@ -10,8 +10,8 @@ export class ListarProdutosPaginado {
    * @param pageSize Tamanho da página
    * @param marcas Filtro de marcas (array)
    */
-  async executar(page: number, pageSize: number, marcas?: string[]) {
-    const { items, total } = await this.produtoRepository.listarPaginado(page, pageSize, marcas);
+  async executar(page: number, pageSize: number, marcas?: string[], precoMax?: number) {
+    const { items, total } = await this.produtoRepository.listarPaginado(page, pageSize, marcas, precoMax);
 
     return {
       items: items.map((produto) => ({

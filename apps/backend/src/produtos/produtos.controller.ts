@@ -49,6 +49,7 @@ export class ProdutosController {
     @Query('colecaoId') colecaoId?: string,
     @Query('colecaoSlug') colecaoSlug?: string,
     @Query('marca') marca?: string | string[],
+    @Query('precoMax') precoMax?: string,
   ) {
     if (colecaoSlug) {
       return await this.listarProdutosPorColecaoSlug.executar(colecaoSlug, Number(page), Number(pageSize));
@@ -66,7 +67,8 @@ export class ProdutosController {
     return await this.listarProdutosPaginado.executar(
       Number(page),
       Number(pageSize),
-      marcasArray.length > 0 ? marcasArray : undefined
+      marcasArray.length > 0 ? marcasArray : undefined,
+      precoMax ? Number(precoMax) : undefined
     );
   }
 

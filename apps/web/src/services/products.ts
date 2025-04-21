@@ -32,7 +32,7 @@ export async function getPaginatedProducts(
   page = 1,
   pageSize = 12,
   marcas?: string[],
-  colecaoId?: string,
+  precoMax?: string,
   colecaoSlug?: string
 ): Promise<PaginatedProducts> {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -43,10 +43,11 @@ export async function getPaginatedProducts(
   if (marcas && marcas.length > 0) {
     marcas.forEach((m) => params.append("marca", m));
   }
+  if (precoMax) {
+    params.append("precoMax", precoMax);
+  }
   if (colecaoSlug) {
     params.append("colecaoSlug", colecaoSlug);
-  } else if (colecaoId) {
-    params.append("colecaoId", colecaoId);
   }
   const url = `${apiUrl}/produtos?${params.toString()}`;
   const response = await fetch(url);

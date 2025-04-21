@@ -36,7 +36,11 @@ export default async function CatalogPage(props: {
     ? colecaoSlugRaw[0]
     : colecaoSlugRaw;
 
-  const result = await getPaginatedProducts(page, pageSize, marcas, undefined, colecaoSlug);
+  // Filtro de preço máximo
+  const precoMaxRaw = params.precoMax;
+  const precoMax = precoMaxRaw ? Number(Array.isArray(precoMaxRaw) ? precoMaxRaw[0] : precoMaxRaw) : undefined;
+
+  const result = await getPaginatedProducts(page, pageSize, marcas, precoMax ? String(precoMax) : undefined, colecaoSlug);
   // LOG PARA DEBUG: verifique no terminal do servidor Next.js
   console.log('[CATALOGO DEBUG] params:', { page, pageSize, marcas, colecaoSlug });
   console.log('[CATALOGO DEBUG] API result:', result);
