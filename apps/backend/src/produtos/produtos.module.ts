@@ -18,6 +18,7 @@ import {
   AdicionarColecaoAoProdutoUseCase,
   ListarProdutosPorColecao,
   ListarProdutosPaginado,
+  ListarProdutosPorColecaoSlug,
 } from '@dropshoes/produto';
 import { PrismaProdutosRepository } from './infra/prisma-produtos.repository';
 import { ColecaoPrismaRepository } from './infra/ColecaoPrismaRepository';
@@ -53,6 +54,12 @@ export const GERADOR_DE_ID = 'GERADOR_DE_ID';
       useFactory: (produtoRepository) =>
         new ListarProdutosPorColecao(produtoRepository),
       inject: [PRODUTO_REPOSITORY],
+    },
+    {
+      provide: ListarProdutosPorColecaoSlug,
+      useFactory: (produtoRepository, colecaoRepository) =>
+        new ListarProdutosPorColecaoSlug(produtoRepository, colecaoRepository),
+      inject: [PRODUTO_REPOSITORY, COLECAO_REPOSITORY],
     },
     {
       provide: ListarProdutosPaginado,

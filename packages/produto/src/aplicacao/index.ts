@@ -6,3 +6,4 @@ export {
 export { ListarColecoesPorTipoUseCase } from "./casos-de-uso/ListarColecoesPorTipoUseCase";
 export { RemoverProduto } from "./casos-de-uso/RemoverProduto";
 export { BuscarProdutoPorId } from "./casos-de-uso/BuscarProdutoPorId";
+export { ListarProdutosPorColecaoSlug } from "./casos-de-uso/ListarProdutosPorColecaoSlug";

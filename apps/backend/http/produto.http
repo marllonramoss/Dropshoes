@@ -13,7 +13,7 @@ Accept: application/json
 
 ### Listar produtos por coleção
 # @name listarProdutosPorColecao
-GET http://localhost:3000/produtos?colecaoId=74214086-43c2-4af0-9f0c-7037c0ebc56d
+GET http://localhost:3000/produtos?colecaoId=bce35373-42ef-464d-8fe7-7219f45d534f
 Accept: application/json
 
 ### Buscar produto por ID
@@ -68,10 +68,18 @@ Content-Type: application/json
 DELETE http://localhost:3000/produtos/7ed8d307-8628-49fa-8d7e-9b33385edbaa
 
 ### Listar produtos paginado
-GET http://localhost:3000/produtos?page=1&pageSize=12
+GET http://localhost:3000/produtos?page=1&pageSize=12&colecaoId=8c3de356-25c4-4e14-a75d-2f56ffd35ddc
+Accept: application/json
+
+### Listar produtos paginado por colecao
+GET http://localhost:3000/produtos?page=1&pageSize=12&colecaoId=bce35373-42ef-464d-8fe7-7219f45d534f
 Accept: application/json
 
 ### Listar produtos por múltiplas marcas
-GET http://localhost:3000/produtos?marca=Nike&marca=Adidas&page=1&pageSize=5
+GET http://localhost:3000/produtos?marca=Nike&marca=Adidas&page=1&pageSize=12
 Accept: application/json
 
+### Listar produtos por slug da coleção
+# @name listarProdutosPorColecaoSlug
+GET http://localhost:3000/produtos?colecaoSlug=destaques&page=1&pageSize=12
+Accept: application/json

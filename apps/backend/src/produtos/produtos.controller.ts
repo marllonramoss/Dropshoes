@@ -21,6 +21,7 @@ import {
   EditarProdutoDTO,
   ListarProdutosPorColecao,
   ListarProdutosPaginado,
+  ListarProdutosPorColecaoSlug,
 } from '@dropshoes/produto';
 
 @Controller('produtos')
@@ -33,6 +34,7 @@ export class ProdutosController {
     private readonly removerProduto: RemoverProduto,
     private readonly listarProdutosPorColecao: ListarProdutosPorColecao,
     private readonly listarProdutosPaginado: ListarProdutosPaginado,
+    private readonly listarProdutosPorColecaoSlug: ListarProdutosPorColecaoSlug,
   ) {}
 
   @Post()
@@ -45,8 +47,12 @@ export class ProdutosController {
     @Query('page') page = 1,
     @Query('pageSize') pageSize = 12,
     @Query('colecaoId') colecaoId?: string,
+    @Query('colecaoSlug') colecaoSlug?: string,
     @Query('marca') marca?: string | string[],
   ) {
+    if (colecaoSlug) {
+      return await this.listarProdutosPorColecaoSlug.executar(colecaoSlug, Number(page), Number(pageSize));
+    }
     if (colecaoId) {
       return await this.listarProdutosPorColecao.executar(colecaoId);
     }

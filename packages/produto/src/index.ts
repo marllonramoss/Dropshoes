@@ -44,6 +44,7 @@ export { RemoverProduto } from "./aplicacao/casos-de-uso/RemoverProduto";
 export { ListarProdutos } from "./aplicacao/casos-de-uso/ListarProdutos";
 
 export { ListarProdutosPorColecao } from "./aplicacao/casos-de-uso/ListarProdutosPorColecao";
+export { ListarProdutosPorColecaoSlug } from "./aplicacao/casos-de-uso/ListarProdutosPorColecaoSlug";
 
 export { ListarProdutosPaginado } from "./aplicacao/casos-de-uso/ListarProdutosPaginado";
 

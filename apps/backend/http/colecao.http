@@ -64,7 +64,7 @@ Content-Type: application/json
 GET {{baseUrl}}/colecoes
 
 ### Buscar uma coleção por ID (usando ID do Verão)
-GET {{baseUrl}}/colecoes/{{criarColecaoVerao.response.body.id}}
+GET {{baseUrl}}/colecoes/50be73c2-0a90-407a-b0e8-b906b1351947
 
 ### Editar uma coleção (usando ID do Inverno)
 PUT {{baseUrl}}/colecoes/{{criarColecaoInverno.response.body.id}}

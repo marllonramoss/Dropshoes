@@ -14,13 +14,13 @@ async function main() {
 
   // Criar coleções
   const colecoes = [
-    { nome: "Destaques", slug: "destaques" },
-    { nome: "Nike", slug: "nike" },
-    { nome: "Adidas", slug: "adidas" },
-    { nome: "Masculino", slug: "masculino" },
-    { nome: "Feminino", slug: "feminino" },
-    { nome: "Infantil", slug: "infantil" },
-    { nome: "Adulto", slug: "adulto" },
+    { nome: "Destaques", slug: "destaques", tipo: "geral" },
+    { nome: "Nike", slug: "nike", tipo: "marca" },
+    { nome: "Adidas", slug: "adidas", tipo: "marca" },
+    { nome: "Masculino", slug: "masculino", tipo: "genero" },
+    { nome: "Feminino", slug: "feminino", tipo: "genero" },
+    { nome: "Infantil", slug: "infantil", tipo: "genero" },
+    { nome: "Adulto", slug: "adulto", tipo: "faixa-etaria" },
   ];
 
   for (const colecao of colecoes) {
@@ -44,36 +44,6 @@ async function main() {
 
   // Produtos exemplo
   const produtos = [
-    {
-      nome: "Nike Air Force 1",
-      marca: "Nike",
-      slug: "nike-air-force-1",
-      preco: 799.90,
-      tamanhos: [38, 39, 40, 41, 42],
-      imagens: [
-        {
-          url: "https://imgnike-a.akamaihd.net/768x768/02195351.jpg",
-          descricao: "Nike Air Force 1 - Vista frontal",
-          principal: true
-        }
-      ],
-      colecoes: [colecaoDestaques?.id, colecaoMasculino?.id, colecaoAdulto?.id]
-    },
-    {
-      nome: "Adidas Ultraboost",
-      marca: "Adidas",
-      slug: "adidas-ultraboost",
-      preco: 999.90,
-      tamanhos: [39, 40, 41, 42, 43],
-      imagens: [
-        {
-          url: "https://loremflickr.com/800/800/sneakers",
-          descricao: "Adidas Ultraboost - Vista lateral",
-          principal: true
-        }
-      ],
-      colecoes: [colecaoDestaques?.id, colecaoMasculino?.id, colecaoAdulto?.id]
-    },
     {
       nome: "Nike Air Max 90",
       marca: "Nike",
@@ -117,7 +87,7 @@ async function main() {
           principal: true
         }
       ],
-      colecoes: [colecaoDestaques?.id, colecaoMasculino?.id, colecaoAdulto?.id]
+      colecoes: [colecaoMasculino?.id, colecaoAdulto?.id]
     },
     {
       nome: "New Balance 574",
@@ -132,7 +102,7 @@ async function main() {
           principal: true
         }
       ],
-      colecoes: [colecaoDestaques?.id, colecaoMasculino?.id, colecaoAdulto?.id]
+      colecoes: [colecaoMasculino?.id, colecaoAdulto?.id]
     },
     {
       nome: "Adidas Forum Low",
@@ -147,7 +117,7 @@ async function main() {
           principal: true
         }
       ],
-      colecoes: [colecaoDestaques?.id, colecaoMasculino?.id, colecaoAdulto?.id]
+      colecoes: [colecaoMasculino?.id, colecaoAdulto?.id]
     },
     {
       nome: "Nike Dunk Low",
@@ -162,7 +132,7 @@ async function main() {
           principal: true
         }
       ],
-      colecoes: [colecaoDestaques?.id, colecaoMasculino?.id, colecaoAdulto?.id]
+      colecoes: [colecaoMasculino?.id, colecaoAdulto?.id]
     },
     {
       nome: "Converse Chuck 70",
@@ -177,7 +147,7 @@ async function main() {
           principal: true
         }
       ],
-      colecoes: [colecaoDestaques?.id, colecaoMasculino?.id, colecaoAdulto?.id]
+      colecoes: [colecaoMasculino?.id, colecaoAdulto?.id]
     },
     {
       nome: "Jordan 1 Low",
@@ -192,7 +162,7 @@ async function main() {
           principal: true
         }
       ],
-      colecoes: [colecaoDestaques?.id, colecaoMasculino?.id, colecaoAdulto?.id]
+      colecoes: [colecaoMasculino?.id, colecaoAdulto?.id]
     },
     {
       nome: "Adidas Superstar",
@@ -207,7 +177,7 @@ async function main() {
           principal: true
         }
       ],
-      colecoes: [colecaoDestaques?.id, colecaoMasculino?.id, colecaoAdulto?.id]
+      colecoes: [colecaoMasculino?.id, colecaoAdulto?.id]
     },
     {
       nome: "Nike Air Max 97",
@@ -222,7 +192,7 @@ async function main() {
           principal: true
         }
       ],
-      colecoes: [colecaoDestaques?.id, colecaoMasculino?.id, colecaoAdulto?.id]
+      colecoes: [colecaoMasculino?.id, colecaoAdulto?.id]
     },
     {
       nome: "Puma Suede",
@@ -237,7 +207,7 @@ async function main() {
           principal: true
         }
       ],
-      colecoes: [colecaoDestaques?.id, colecaoMasculino?.id, colecaoAdulto?.id]
+      colecoes: [colecaoMasculino?.id, colecaoAdulto?.id]
     },
     {
       nome: "Reebok Classic",
@@ -252,7 +222,7 @@ async function main() {
           principal: true
         }
       ],
-      colecoes: [colecaoDestaques?.id, colecaoMasculino?.id, colecaoAdulto?.id]
+      colecoes: [colecaoMasculino?.id, colecaoAdulto?.id]
     },
     {
       nome: "New Balance 550",
@@ -267,7 +237,7 @@ async function main() {
           principal: true
         }
       ],
-      colecoes: [colecaoDestaques?.id, colecaoMasculino?.id, colecaoAdulto?.id]
+      colecoes: [colecaoMasculino?.id, colecaoAdulto?.id]
     },
     {
       nome: "Vans Sk8-Hi",
@@ -282,7 +252,7 @@ async function main() {
           principal: true
         }
       ],
-      colecoes: [colecaoDestaques?.id, colecaoMasculino?.id, colecaoAdulto?.id]
+      colecoes: [colecaoMasculino?.id, colecaoAdulto?.id]
     },
     {
       nome: "Nike SB Janoski",
@@ -297,7 +267,7 @@ async function main() {
           principal: true
         }
       ],
-      colecoes: [colecaoDestaques?.id, colecaoMasculino?.id, colecaoAdulto?.id]
+      colecoes: [colecaoMasculino?.id, colecaoAdulto?.id]
     },
     {
       nome: "Adidas NMD",
@@ -312,7 +282,7 @@ async function main() {
           principal: true
         }
       ],
-      colecoes: [colecaoDestaques?.id, colecaoMasculino?.id, colecaoAdulto?.id]
+      colecoes: [colecaoMasculino?.id, colecaoAdulto?.id]
     },
     {
       nome: "Converse One Star",
@@ -327,7 +297,7 @@ async function main() {
           principal: true
         }
       ],
-      colecoes: [colecaoDestaques?.id, colecaoMasculino?.id, colecaoAdulto?.id]
+      colecoes: [colecaoMasculino?.id, colecaoAdulto?.id]
     },
     {
       nome: "Jordan 4 Retro",
@@ -342,7 +312,7 @@ async function main() {
           principal: true
         }
       ],
-      colecoes: [colecaoDestaques?.id, colecaoMasculino?.id, colecaoAdulto?.id]
+      colecoes: [colecaoMasculino?.id, colecaoAdulto?.id]
     }
   ];
 
