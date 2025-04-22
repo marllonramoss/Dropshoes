@@ -16,18 +16,21 @@ export function HeaderUserMenu() {
   // Fecha dropdown ao clicar fora
   useEffect(() => {
     if (!open) return;
-    function handleClickOutside(event: MouseEvent) {
+    function handleClickOutside(event: PointerEvent) {
+      const dropdown = dropdownRef.current;
+      const button = btnRef.current;
+      const target = event.target as Node;
+      // DEBUG: veja se aparece ao clicar na hero
+      console.log("Pointer event detected", { target });
       if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node) &&
-        btnRef.current &&
-        !btnRef.current.contains(event.target as Node)
+        dropdown && !dropdown.contains(target) &&
+        button && !button.contains(target)
       ) {
         setOpen(false);
       }
     }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("pointerdown", handleClickOutside, true);
+    return () => document.removeEventListener("pointerdown", handleClickOutside, true);
   }, [open]);
 
   // Handler para fechar dropdown ao clicar fora
@@ -43,7 +46,7 @@ export function HeaderUserMenu() {
         <button
           ref={btnRef}
           type="button"
-          className="p-2 text-gray-700 hover:text-black relative"
+          className="p-2 text-gray-400 hover:text-gray-500 relative"
           aria-label="Menu do usuário"
           onClick={() => setOpen((v) => !v)}
         >
@@ -53,9 +56,9 @@ export function HeaderUserMenu() {
           </span>
         </button>
         {open && (
-          <div ref={dropdownRef} className="absolute right-0 mt-2 w-40 bg-white border rounded shadow z-50">
+          <div ref={dropdownRef} className="absolute right-0 mt-2 w-40 bg-white rounded shadow-lg z-50">
             <button
-              className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-gray-700"
+              className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-gray-700 rounded-t-md"
               onClick={() => {
                 setOpen(false);
                 router.push("/minha-conta");
@@ -64,7 +67,7 @@ export function HeaderUserMenu() {
               Minha conta
             </button>
             <button
-              className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-gray-700"
+              className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-gray-700 rounded-b-md"
               onClick={() => { setOpen(false); signOut(); }}
             >
               Sair
