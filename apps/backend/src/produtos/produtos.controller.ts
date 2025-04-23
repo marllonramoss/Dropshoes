@@ -1,15 +1,18 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Param,
-  Put,
+  Controller,
   Delete,
+  Get,
+  Inject,
+  Param,
+  Post,
+  Put,
+  Query,
+  UseGuards,
+  UseInterceptors,
   HttpCode,
   HttpStatus,
   NotFoundException,
-  Query,
 } from '@nestjs/common';
 import {
   AdicionarProduto,
@@ -24,9 +27,12 @@ import {
   ListarProdutosPorColecaoSlug,
 } from '@dropshoes/produto';
 
+import { CustomCacheTTL } from '../shared/interceptors/custom-cache.interceptor';
+
 @Controller('produtos')
 export class ProdutosController {
   constructor(
+    @Inject('CACHE_MANAGER') private cacheManager: any,
     private readonly adicionarProduto: AdicionarProduto,
     private readonly listarProdutos: ListarProdutos,
     private readonly buscarProdutoPorId: BuscarProdutoPorId,
@@ -42,7 +48,36 @@ export class ProdutosController {
     return await this.adicionarProduto.executar(dto);
   }
 
+  @Get('cache-teste-fixo')
+  async cacheTesteFixo() {
+    console.log('[DEBUG] Executou cacheTesteFixo');
+    return { agora: Date.now() };
+  }
+
+  @Get('cache-test')
+  async cacheTest() {
+    const key = 'nestjs-cache-test-123';
+    await this.cacheManager.set(key, 'valor do redis', 60);
+    const value = await this.cacheManager.get(key);
+    return { cached: value };
+  }
+
+  @Get('cache-teste-manual')
+  async cacheTesteManual() {
+    const key = 'manual-cache';
+    const cached = await this.cacheManager.get(key);
+    if (cached) {
+      console.log('[DEBUG] HIT manual-cache');
+      return { cached, manual: true };
+    }
+    const now = Date.now();
+    await this.cacheManager.set(key, now, { ttl: 60 });
+    console.log('[DEBUG] MISS manual-cache');
+    return { set: true, agora: now };
+  }
+
   @Get()
+  @CustomCacheTTL(1) // cacheia a listagem por 120 segundos - NAO ESTA FUNCIONANDO, PARECE QUE ESTA INFINITO
   async listar(
     @Query('page') page = 1,
     @Query('pageSize') pageSize = 12,
@@ -52,23 +87,26 @@ export class ProdutosController {
     @Query('precoMax') precoMax?: string,
   ) {
     if (colecaoSlug) {
-      return await this.listarProdutosPorColecaoSlug.executar(colecaoSlug, Number(page), Number(pageSize));
+      console.log('[DEBUG] Executou listarProdutosPorColecaoSlug');
+      return await this.listarProdutosPorColecaoSlug.executar(
+        colecaoSlug,
+        Number(page),
+        Number(pageSize),
+      );
     }
     if (colecaoId) {
+      console.log('[DEBUG] Executou listarProdutosPorColecao');
       return await this.listarProdutosPorColecao.executar(colecaoId);
     }
     // Normaliza sempre para array
-    const marcasArray = marca
-      ? Array.isArray(marca)
-        ? marca
-        : [marca]
-      : [];
+    const marcasArray = marca ? (Array.isArray(marca) ? marca : [marca]) : [];
+    console.log('[DEBUG] Executou listarProdutosPaginado');
     // Agora passando o filtro de marcas para o use case
     return await this.listarProdutosPaginado.executar(
       Number(page),
       Number(pageSize),
       marcasArray.length > 0 ? marcasArray : undefined,
-      precoMax ? Number(precoMax) : undefined
+      precoMax ? Number(precoMax) : undefined,
     );
   }
 
