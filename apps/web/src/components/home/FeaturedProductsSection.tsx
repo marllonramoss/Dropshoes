@@ -26,9 +26,18 @@ type Product = {
 
 import { ProductCard } from "@/components/product/ProductCard";
 
+import { getPaginatedProducts } from "@/services/products";
+
 export async function FeaturedProductsSection() {
-  const products = await getFeaturedProducts();
-  const displayProducts = products.slice(0, 8);
+  // Substitua pelo slug correto da coleção de destaque, se necessário
+  const COLECAO_DESTAQUE_SLUG = "masculino";
+  const { items: displayProducts } = await getPaginatedProducts(
+    1,
+    8,
+    undefined,
+    undefined,
+    COLECAO_DESTAQUE_SLUG
+  );
 
   return (
     <section className="container mx-auto px-4 py-16">
@@ -42,7 +51,13 @@ export async function FeaturedProductsSection() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-12">
         {displayProducts.map((product: Product) => (
-          <ProductCard key={product.id} id={product.id} nome={product.nome} preco={product.preco} imagens={product.imagens} />
+          <ProductCard
+            key={product.id}
+            id={product.id}
+            nome={product.nome}
+            preco={product.preco}
+            imagens={product.imagens}
+          />
         ))}
       </div>
 

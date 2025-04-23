@@ -31,7 +31,7 @@ export function ProductCard({ nome, preco, imagens }: ProductCardProps) {
     <div className="bg-white rounded-lg shadow p-4 flex flex-col min-h-[320px]">
       <div className="aspect-square relative bg-zinc-100 rounded-lg overflow-hidden">
         <img
-          src="https://media.istockphoto.com/id/2173059563/vector/coming-soon-image-on-white-background-no-photo-available.jpg?s=612x612&w=0&k=20&c=v0a_B58wPFNDPULSiw_BmPyhSNCyrP_d17i2BPPyDTk="
+          src={imagens && imagens.length > 0 ? imagens[0].url : "/img/no-image.png"}
           alt={nome}
           className="w-full h-full object-cover"
         />
