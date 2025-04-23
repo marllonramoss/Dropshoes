@@ -14,7 +14,6 @@ type ProductCardProps = {
 };
 
 export function ProductCard({ nome, preco, imagens }: ProductCardProps) {
-
   // Função para formatar preço em reais
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("pt-BR", {
@@ -29,7 +28,7 @@ export function ProductCard({ nome, preco, imagens }: ProductCardProps) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-4">
+    <div className="bg-white rounded-lg shadow p-4 flex flex-col min-h-[320px]">
       <div className="aspect-square relative bg-zinc-100 rounded-lg overflow-hidden">
         <img
           src="https://media.istockphoto.com/id/2173059563/vector/coming-soon-image-on-white-background-no-photo-available.jpg?s=612x612&w=0&k=20&c=v0a_B58wPFNDPULSiw_BmPyhSNCyrP_d17i2BPPyDTk="
@@ -37,15 +36,15 @@ export function ProductCard({ nome, preco, imagens }: ProductCardProps) {
           className="w-full h-full object-cover"
         />
       </div>
-      <h3 className="font-medium text-lg mt-4">{nome}</h3>
-      <p className="text-zinc-600 mt-2">
-        {new Intl.NumberFormat("pt-BR", {
-          style: "currency",
-          currency: "BRL",
-        }).format(preco)}
-      </p>
-      <div className="mt-4 flex justify-between items-center">
-        <button className="bg-zinc-950 text-white px-4 py-2 rounded-md hover:bg-zinc-900 transition-colors cursor-pointer">
+      <h3 className="font-medium text-lg mt-2 break-words">{nome}</h3>
+      <div className="mt-auto">
+        <p className="text-zinc-600">
+          {new Intl.NumberFormat("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+          }).format(preco)}
+        </p>
+        <button className="bg-zinc-950 text-white px-4 py-2 rounded-md hover:bg-zinc-900 transition-colors cursor-pointer w-full mt-4">
           Comprar
         </button>
       </div>
