@@ -68,7 +68,7 @@ Content-Type: application/json
 DELETE http://localhost:3000/produtos/7ed8d307-8628-49fa-8d7e-9b33385edbaa
 
 ### Listar produtos paginado
-GET http://localhost:3000/produtos?page=1&pageSize=12&colecaoId=8c3de356-25c4-4e14-a75d-2f56ffd35ddc
+GET http://localhost:3000/produtos?page=1&pageSize=12&
 Accept: application/json
 
 ### Listar produtos paginado por colecao
