@@ -75,8 +75,12 @@ Accept: application/json
 GET http://localhost:3000/produtos?page=1&pageSize=12&colecaoId=bce35373-42ef-464d-8fe7-7219f45d534f
 Accept: application/json
 
-### Listar produtos por múltiplas marcas
+### Listar produtos por múltiplas marcas 1
 GET http://localhost:3000/produtos?marca=Nike&marca=Adidas&page=1&pageSize=12
+Accept: application/json
+
+### Listar produtos por múltiplas marcas 2
+GET http://localhost:3000/produtos?marca=New+Balance&page=1&pageSize=12
 Accept: application/json
 
 ### Listar produtos por slug da coleção
