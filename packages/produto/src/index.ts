@@ -48,6 +48,7 @@ export { ListarProdutosPorColecaoSlug } from "./aplicacao/casos-de-uso/ListarPro
 
 export { ListarProdutosPaginado } from "./aplicacao/casos-de-uso/ListarProdutosPaginado";
 
+export { BuscarProdutosPorTermoUseCase } from "./aplicacao/casos-de-uso/BuscarProdutosPorTermoUseCase";
 // Casos de uso de Coleções
 export * from "./aplicacao/casos-de-uso/AdicionarColecaoUseCase";
 export * from "./aplicacao/casos-de-uso/ListarColecoesUseCase";

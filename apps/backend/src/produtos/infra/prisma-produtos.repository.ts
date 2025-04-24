@@ -232,6 +232,24 @@ export class PrismaProdutosRepository implements ProdutoRepository {
     return produtosData.map((produtoData) => this.mapToDomain(produtoData));
   }
 
+  async buscarPorTermo(termo: string): Promise<Produto[]> {
+    const produtosData = await this.prisma.produto.findMany({
+      where: {
+        OR: [
+          { nome: { contains: termo, mode: 'insensitive' } },
+          { marca: { contains: termo, mode: 'insensitive' } },
+        ],
+      },
+      include: {
+        tamanhos: true,
+        imagens: true,
+        colecoes: { include: { colecao: true } },
+      },
+      take: 10, // Limite para não retornar muitos resultados
+    });
+    return produtosData.map((produtoData) => this.mapToDomain(produtoData));
+  }
+
   async remover(id: string): Promise<boolean> {
     try {
       await this.prisma.produto.delete({

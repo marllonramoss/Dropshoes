@@ -23,6 +23,7 @@ import {
 import { PrismaProdutosRepository } from './infra/prisma-produtos.repository';
 import { ColecaoPrismaRepository } from './infra/ColecaoPrismaRepository';
 import { UuidGeradorDeId } from './infra/uuid-gerador-de-id';
+import { BuscarProdutosPorTermoUseCase } from '@dropshoes/produto';
 
 export const PRODUTO_REPOSITORY = 'PRODUTO_REPOSITORY';
 export const COLECAO_REPOSITORY = 'COLECAO_REPOSITORY';
@@ -44,6 +45,11 @@ export const GERADOR_DE_ID = 'GERADOR_DE_ID';
       useClass: UuidGeradorDeId,
     },
     // Produtos use cases
+    {
+      provide: BuscarProdutosPorTermoUseCase,
+      useFactory: (produtoRepository) => new BuscarProdutosPorTermoUseCase(produtoRepository),
+      inject: [PRODUTO_REPOSITORY],
+    },
     {
       provide: ListarProdutos,
       useFactory: (produtoRepository) => new ListarProdutos(produtoRepository),

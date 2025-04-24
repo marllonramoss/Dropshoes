@@ -46,7 +46,7 @@ export function HeaderUserMenu() {
         <button
           ref={btnRef}
           type="button"
-          className="p-2 text-gray-400 hover:text-gray-500 relative"
+          className="p-2 text-gray-400 hover:text-gray-500 relative cursor-pointer"
           aria-label="Menu do usuário"
           onClick={() => setOpen((v) => !v)}
         >
@@ -79,7 +79,7 @@ export function HeaderUserMenu() {
         <Link href="/sign-in" prefetch={false}>
           <button
             type="button"
-            className="p-2 text-gray-400 hover:text-gray-500 relative"
+            className="p-2 text-gray-400 hover:text-gray-500 relative cursor-pointer"
             aria-label="Entrar"
           >
             <User className="h-5 w-5" aria-hidden="true" />

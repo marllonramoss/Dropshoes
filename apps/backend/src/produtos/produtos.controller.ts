@@ -25,6 +25,7 @@ import {
   ListarProdutosPorColecao,
   ListarProdutosPaginado,
   ListarProdutosPorColecaoSlug,
+  BuscarProdutosPorTermoUseCase,
 } from '@dropshoes/produto';
 
 import { CustomCacheTTL } from '../shared/interceptors/custom-cache.interceptor';
@@ -41,6 +42,7 @@ export class ProdutosController {
     private readonly listarProdutosPorColecao: ListarProdutosPorColecao,
     private readonly listarProdutosPaginado: ListarProdutosPaginado,
     private readonly listarProdutosPorColecaoSlug: ListarProdutosPorColecaoSlug,
+    private readonly buscarProdutosPorTermo: BuscarProdutosPorTermoUseCase,
   ) {}
 
   @Post()
@@ -108,6 +110,11 @@ export class ProdutosController {
       marcasArray.length > 0 ? marcasArray : undefined,
       precoMax ? Number(precoMax) : undefined,
     );
+  }
+
+  @Get('search')
+  async search(@Query('query') query: string) {
+    return await this.buscarProdutosPorTermo.executar(query);
   }
 
   @Get(':id')
